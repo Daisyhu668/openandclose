@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>开户/一般/强化 尽调生成器 · 雅致版 v3.3</title>
+<style>
+  /* —— Design System · 银灰·墨蓝·青绿 —— */
+  :root{
+    --bg:#f6f7fb;          /* 背景纸感 */
+    --paper:#ffffff;       /* 卡片底色 */
+    --ink:#0f172a;         /* 文字主色 */
+    --muted:#667085;       /* 次级文字 */
+    --line:#e6e8ee;        /* 分隔线 */
+    --brand:#2563eb;       /* 品牌蓝 */
+    --brand2:#06b6d4;      /* 青绿辅色 */
+    --ok:#10b981;--warn:#f59e0b;--danger:#ef4444;
+    --radius:16px;--shadow:0 12px 30px rgba(15,23,42,.06),0 2px 6px rgba(15,23,42,.04);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:linear-gradient(180deg,#fafbff 0%,#f5f7fb 60%,#eef1f7 100%);color:var(--ink);font:15.5px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",Segoe UI,Roboto,Helvetica,Arial}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 120px}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .logo{width:36px;height:36px;border-radius:10px;background:conic-gradient(from 220deg at 50% 50%,#0ea5e9, #2563eb 40%, #14b8a6 80%, #0ea5e9);box-shadow:0 6px 16px rgba(37,99,235,.25)}
+  h1{margin:0;font-weight:700;font-size:clamp(20px,2.6vw,28px);letter-spacing:.2px;background:linear-gradient(90deg,#0f172a 0%,#1e293b 40%,#0f172a 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:13px;margin-top:4px}
+  
+  .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .section-title{font-weight:650;margin:2px 0 12px;letter-spacing:.2px}
+
+  .row{display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:center;margin:12px 0}
+  label{color:#475569}
+  input[type=text],textarea{width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:12px 14px;outline:none;transition:border .15s, box-shadow .15s}
+  input[type=text]:focus,textarea:focus{border-color:#c8d3ff;box-shadow:0 0 0 4px rgba(37,99,235,.08)}
+  textarea{min-height:110px}
+  input[type=file]{font-size:13px;color:#475569}
+
+  /* 选择 Chips → 高级质感 */
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{position:relative;border:1px solid #d9ddea;border-radius:999px;padding:8px 14px;background:linear-gradient(180deg,#fff,#f6f8fc);color:#1f2a44;cursor:pointer;transition:all .15s ease;box-shadow:inset 0 -1px 0 rgba(0,0,0,.03)}
+  .chip:hover{transform:translateY(-1px)}
+  .chip.sel{background:linear-gradient(180deg,#2563eb,#1d4ed8);color:#fff;border-color:transparent;box-shadow:0 6px 14px rgba(37,99,235,.25)}
+
+  /* 图片预览 */
+  .gridP{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .thumb{width:100%;aspect-ratio:4/3;border-radius:14px;object-fit:cover;background:#f0f3fa;border:1px solid var(--line);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+
+  /* 顶部提示条 */
+  .hint{color:var(--muted);font-size:12.5px}
+
+  /* 底部悬浮操作条 */
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(255,255,255,.8);backdrop-filter:saturate(160%) blur(10px);border-top:1px solid var(--line);}
+  .dock-inner{max-width:1180px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:12px}
+  .dock .log{margin-left:auto;color:var(--muted)}
+
+  /* 按钮体系 */
+  .btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:12px;padding:12px 18px;color:#fff;background:linear-gradient(90deg,var(--brand) 0%,var(--brand2) 100%);box-shadow:0 10px 24px rgba(2,132,199,.28);cursor:pointer;font-weight:600;letter-spacing:.2px}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:#f0f3fa;color:#1f2a44;border:1px solid var(--line);box-shadow:none}
+
+  /* 小屏优化 */
+  @media (max-width:880px){.grid2{grid-template-columns:1fr}.row{grid-template-columns:1fr}.dock-inner{padding:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-hidden="true"></div>
+    <div>
+      <h1>开户 / 一般 / 强化 · 尽调生成器</h1>
+      <div class="sub">离线可用 · 本地相册插图 · OCR 可选（失败不影响生成） · 首次导入模板后可复用</div>
+    </div>
+  </header>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="section-title">① 基本信息</div>
+      <div class="row"><label>客户名称</label><input id="cname" type="text" placeholder="如：厦门利邦荣财务有限责任公司"></div>
+      <div class="row"><label>行业分类</label><input id="industry" type="text" placeholder="可留空，如：L7241 会计、审计及税务服务"></div>
+      <div class="row"><label>尽调类型</label>
+        <div class="chips" id="typeChips">
+          <span class="chip sel" data-v="开户">开户</span>
+          <span class="chip" data-v="一般">一般</span>
+          <span class="chip" data-v="强化">强化</span>
+          <span class="chip" data-v="自动">自动判断</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">② 模板与排版</div>
+      <div class="row"><label>导入模板</label>
+        <div>
+          <input id="tpl" type="file" accept=".docx"/>
+          <div class="hint">只需首次导入，之后可直接生成。</div>
+        </div>
+      </div>
+      <div class="row"><label>照片列数</label>
+        <div class="chips" id="colsChips">
+          <span class="chip sel" data-v="2">两列</span>
+          <span class="chip" data-v="3">三列</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">③ 触发项（多选）</div>
+    <div class="hint" style="margin-bottom:8px">勾选后自动带入说明；选择“自动判断”将按是否包含“强化 (E××)”来判定类型。</div>
+    <div class="chips" id="reasonChips"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="section-title">④ 补充说明</div>
+      <textarea id="notes" placeholder="可粘贴OCR结果或手写备注；例如：已核验法人名下多家公司、名单命中复核无违法等"></textarea>
+    </div>
+    <div class="card">
+      <div class="section-title">⑤ OCR（可选）</div>
+      <div class="row"><label>启用OCR</label>
+        <label class="switch"><input id="ocrOn" type="checkbox"><span class="slider"></span></label>
+      </div>
+      <div class="row"><label>识别图片</label>
+        <div>
+          <input id="ocrFiles" type="file" accept="image/*" multiple/>
+          <div style="margin-top:8px;display:flex;gap:10px;align-items:center"><button class="btn ghost" id="btnDoOcr">识别到补充说明</button><span class="hint" id="ocrLog">未启用</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">⑥ 走访照片（本地相册，不上传）</div>
+    <input id="photos" type="file" accept="image/*" multiple/>
+    <div class="gridP" id="preview" style="margin-top:10px"></div>
+    <div class="hint" style="margin-top:6px">将自动排版为所选列数、等比缩放、白底，便于打印观感。</div>
+  </div>
+</div>
+
+<!-- 底部悬浮操作条 -->
+<div class="dock">
+  <div class="dock-inner">
+    <button class="btn" id="btnGen">一键生成 DOCX</button>
+    <span class="hint log" id="log">准备就绪…</span>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ---------- 轻量选择器 & 交互 ----------
+const $ = (s)=> document.querySelector(s);
+const $$ = (s)=> Array.from(document.querySelectorAll(s));
+
+const wrapEl = document.querySelector('.wrap');
+if (wrapEl) {
+  wrapEl.addEventListener('click',(e)=>{
+    const t = e.target;
+    if (!(t instanceof HTMLElement)) return;
+    if (t.classList.contains('chip')){
+      const g = t.parentElement;
+      if (!g) return;
+      if (g.id==='typeChips' || g.id==='colsChips'){
+        g.querySelectorAll('.chip').forEach((x)=>x.classList.remove('sel'));
+        t.classList.add('sel');
+      }else{
+        t.classList.toggle('sel');
+      }
+    }
+  });
+}
+
+// ---------- 触发项清单（更全） ----------
+const REASONS=[
+  // 一般 G××
+  {id:'G1',name:'法人/经办人短期多户开户'},
+  {id:'G2',name:'注册地址/经营地址重复'},
+  {id:'G3',name:'新设立企业<6个月'},
+  {id:'G4',name:'交易规模高于注册资本/行业惯例'},
+  {id:'G5',name:'涉高风险国家/地区往来'},
+  {id:'G6',name:'主营与流水匹配度存疑'},
+  {id:'G7',name:'法人/经办人行动不便（上门/视频核实）'},
+  {id:'G8',name:'法人/股东长期境外经商/旅居'},
+  {id:'G9',name:'法定代表人≥70岁'},
+  {id:'G10',name:'监管/上级行提示的一般情形'},
+  // 强化 E××
+  {id:'E1',name:'命中高风险名单'},
+  {id:'E2',name:'疑似壳公司（员工≤2）'},
+  {id:'E3',name:'短期内频繁开户/销户'},
+  {id:'E4',name:'受益所有人不明/隐匿'},
+  {id:'E5',name:'复杂股权结构（多层嵌套）'},
+  {id:'E6',name:'大额现金或频繁跨境资金流动'},
+  {id:'E7',name:'开户理由反复变更'},
+  {id:'E8',name:'法人/股东涉诉涉案'},
+  {id:'E9',name:'法人≥80岁且代理开户'},
+  {id:'E10',name:'高频更换法人/高管'},
+  {id:'E11',name:'高风险行业（贵金属/虚拟货币等）'},
+  {id:'E12',name:'政治公众人物（PEP）'},
+  {id:'E13',name:'监管/上级行提示的强化情形'}
+];
+const REASON_TEXT={
+  // 一般
+  G1:'经核实，法人（经办人）近期确有为多家公司开户，但各企业独立运营、资金用途清晰，未见异常资金安排。',
+  G2:'注册地址与多家公司重复，现场核实各企业租赁合同及分隔区域，经营真实性已确认，无关联异常。',
+  G3:'成立不足6个月，已落实经营场所、员工及业务合同，未发现虚假注册或空壳迹象。',
+  G4:'交易规模高于注册资本，经查合同、发票及流水，交易背景与经营范围匹配，资金来源去向合理。',
+  G5:'存在高风险国家/地区资金往来，已审查贸易合同及报关单，未发现洗钱风险。',
+  G6:'经穿透核查，主营业务与交易流水基本匹配，未见异常用途。',
+  G7:'已执行上门或视频核实程序，身份及开户意愿真实有效。',
+  G8:'已远程视频核实身份并取得公证文件，经营管理模式与实际情况一致。',
+  G9:'法人高龄，已完成面谈录像及签字确认，意思表示真实，授权手续完备。',
+  G10:'根据监管提示已完成必要核查，整体风险可控。',
+  // 强化
+  E1:'客户命中高风险名单，已穿透核查股东背景及资金来源，未见违法违规情形。',
+  E2:'现场调查确认存在实际业务与资金往来，排除空壳风险。',
+  E3:'系业务板块独立结算需求，资金流向明确，无异常拆分。',
+  E4:'多层穿透后已锁定 UBO，并取得书面声明备案。',
+  E5:'股权多层嵌套，经核查商业目的合理，实际控制人已明确登记。',
+  E6:'已核对现金来源及外汇凭证，交易背景真实合规。',
+  E7:'面谈澄清账户用途，未发现洗钱或欺诈风险。',
+  E8:'已获取司法文件，涉诉对经营影响可控。',
+  E9:'已完成代理授权及面谈录像，手续合规。',
+  E10:'系内部治理调整，实控人稳定，业务正常。',
+  E11:'执行强化尽调，未发现违法违规迹象。',
+  E12:'已上调风险等级并实施严格监控，资金来源合法。',
+  E13:'根据监管要求已完成全方位核查，风险已控制。'
+};
+
+function renderReasons(){
+  const box=$('#reasonChips');
+  if(!box) return;
+  REASONS.forEach((r)=>{
+    const el=document.createElement('span');
+    el.className='chip';
+    el.dataset.id=r.id;
+    el.textContent=r.id+'·'+r.name;
+    box.appendChild(el);
+  });
+}
+renderReasons();
+
+// ---------- 预览图片 ----------
+let picked=[];
+const photosEl = document.getElementById('photos');
+if (photosEl) {
+  photosEl.addEventListener('change', async (e)=>{
+    picked=[...e.target.files];
+    const pv=document.getElementById('preview');
+    if(!pv) return;
+    pv.innerHTML='';
+    for(const f of picked){
+      const url=URL.createObjectURL(f);
+      const img=new Image();
+      img.src=url;
+      try{ await img.decode(); }catch(_){ /* ignore */ }
+      img.className='thumb';
+      pv.appendChild(img);
+    }
+  });
+}
+
+// ---------- 帮助函数 ----------
+function escapeXml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function autoType(sel){const t=document.querySelector('#typeChips .chip.sel').dataset.v;return t==='自动'?(sel.some((id)=>id.startsWith('E'))?'强化':'一般'):t}
+function assemble(c,dd,sel,notes){
+  const lines = sel.length ? sel.map((id,i)=> (i+1)+'. '+(REASON_TEXT[id]||id)).join('\n') : '1. 常规核实，未见异常。';
+  let body='【'+dd+'尽调】\n客户名称：'+c+'\n\n触发原因及调查结论：\n'+lines;
+  if(notes && notes.trim()) body+='\n\n补充说明：'+notes.trim();
+  body+='\n\n本次尽职调查已完成必要核查程序，资料齐全真实有效，资金来源与业务模式清晰，整体风险可控。';
+  return body;
+}
+
+// ---------- 仅加载 PizZip（绕开 docxtemplater，避免 MultiError） ----------
+function loadScript(url){
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src=url+((url.indexOf('?')>-1?'&':'?')+Date.now());
+    s.onload=()=>res();
+    s.onerror=()=>rej(new Error('加载失败: '+url));
+    document.head.appendChild(s);
+  });
+}
+async function ensureZip(){
+  if(window.PizZip) return;
+  const urls=[
+    'https://unpkg.com/pizzip@3.1.7/dist/pizzip.js',
+    'https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.js'
+  ];
+  for(const u of urls){
+    try{ await loadScript(u); if(window.PizZip) return; }catch(_){ /* 尝试下一个 */ }
+  }
+  throw new Error('核心库加载失败，请连网打开一次。');
+}
+
+// ---------- 照片合成 & 注入 ----------
+function cols(){
+  const chip = document.querySelector('#colsChips .chip.sel');
+  const v = chip? chip.dataset.v : '2';
+  return parseInt(v,10)||2;
+}
+async function buildPhotoGrid(){
+  if(!picked.length) return null;
+  const c=cols();
+  const cellW = c===2?480:360; const cellH = c===2?360:270; const gap=12;
+  const rows=Math.ceil(picked.length/c);
+  const W=c*cellW+(c-1)*gap, H=rows*cellH+(rows-1)*gap;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
+  let i=0;
+  for(let r=0;r<rows;r++){
+    for(let cc=0;cc<c;cc++){
+      if(i>=picked.length) break;
+      const f=picked[i++];
+      const url=URL.createObjectURL(f);
+      const img=new Image(); img.src=url; try{ await img.decode(); }catch(_){ }
+      const scale=Math.min(cellW/img.naturalWidth, cellH/img.naturalHeight);
+      const w=img.naturalWidth*scale, h=img.naturalHeight*scale;
+      const x=cc*(cellW+gap)+(cellW-w)/2, y=r*(cellH+gap)+(cellH-h)/2;
+      ctx.drawImage(img,x,y,w,h);
+    }
+  }
+  const dataUrl=cv.toDataURL('image/jpeg',0.92);
+  return {base64:dataUrl.split(',')[1], W, H};
+}
+function px2emu(px){return Math.round(px*9525)}
+function nextMedia(zip){
+  const files=Object.keys(zip.files).filter((k)=>k.indexOf('word/media/')===0);
+  const nums=files.map((f)=>{const m=f.match(/image(\d+)\./);return m?parseInt(m[1],10):0});
+  const n=nums.length?Math.max.apply(null,nums)+1:1; return 'word/media/image'+n+'.jpeg'
+}
+function nextRid(rels){
+  const ids=[]; const re=/Id=\"rId(\d+)\"/g; let m;
+  while((m=re.exec(rels))){ ids.push(parseInt(m[1],10)); }
+  const max=ids.length?Math.max.apply(null,ids):800; return 'rId'+(max+1)
+}
+function injectPhotoXML(zip,base64,wPx,hPx){
+  const media=nextMedia(zip); zip.file(media,base64,{base64:true});
+  const relPath='word/_rels/document.xml.rels';
+  let rels=zip.file(relPath).asText();
+  const rid=nextRid(rels);
+  rels=rels.replace('</Relationships>','\n  <Relationship Id="'+rid+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="'+media.replace('word/','')+'"/>\n</Relationships>');
+  zip.file(relPath,rels);
+  const docPath='word/document.xml'; let xml=zip.file(docPath).asText();
+  const w=px2emu(wPx), h=px2emu(hPx);
+  const DRAW = '<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" xmlns:wp="http://schemas.openxmlformats.org/officeDocument/2006/wordprocessingDrawing">'
+    +'<wp:extent cx="'+w+'" cy="'+h+'"/>'
+    +'<wp:docPr id="1" name="Photo"/>'
+    +'<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+    +'<a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">'
+    +'<pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">'
+    +'<pic:nvPicPr><pic:cNvPr id="0" name="photo"/><pic:cNvPicPr/></pic:nvPicPr>'
+    +'<pic:blipFill><a:blip r:embed="'+rid+'" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/>'
+    +'<a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
+    +'<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+w+'" cy="'+h+'"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>'
+    +'</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>';
+  const rePh=/<w:t[^>]*>\[\[PHOTO\]\]<\/w:t>/;
+  if(rePh.test(xml)) xml=xml.replace(rePh,DRAW); else xml=xml.replace(/<\/w:body>\s*<\/w:document>/,'<w:p>'+DRAW+'</w:p></w:body></w:document>');
+  zip.file(docPath,xml);
+}
+
+// ---------- 直接文本替换（绕开 docxtemplater，避免 MultiError） ----------
+function replacePlaceholders(xml, map){
+  for(const k in map){ if(!Object.prototype.hasOwnProperty.call(map,k)) continue; const v=map[k];
+    const safe=escapeXml(v==null?'':String(v));
+    const p1='{{'+k+'}}'; const p2='{{ '+k+' }}';
+    xml=xml.split(p1).join(safe); xml=xml.split(p2).join(safe);
+  }
+  ['走访照片','照片','照片区'].forEach(function(k){
+    const p1='{{'+k+'}}', p2='{{ '+k+' }}';
+    xml=xml.split(p1).join('[[PHOTO]]');
+    xml=xml.split(p2).join('[[PHOTO]]');
+  });
+  return xml;
+}
+
+// ---------- 生成 ----------
+async function generate(){
+  try{
+    const logEl = document.getElementById('log'); if(logEl) logEl.textContent='准备生成…';
+    await ensureZip();
+    const cname=document.getElementById('cname').value.trim(); if(!cname){ alert('请填写客户名称'); return; }
+    const industry=document.getElementById('industry').value.trim();
+    const sel=$$('#reasonChips .chip.sel').map((x)=>x.dataset.id);
+    const dd=autoType(sel);
+    const notes=document.getElementById('notes').value;
+    const tpl=document.getElementById('tpl').files[0]; if(!tpl){ alert('请先导入模板 .docx（仅首次）'); return; }
+    const ab=await tpl.arrayBuffer(); const zip=new PizZip(ab);
+    const docPath='word/document.xml'; let xml=zip.file(docPath).asText();
+    const body=assemble(cname,dd,sel,notes);
+    xml=replacePlaceholders(xml,{ '客户名称':cname, '行业分类':industry||'', '尽调类型':dd, '尽职调查核实情况':body });
+    zip.file(docPath, xml);
+    const grid=await buildPhotoGrid(); if(grid){ injectPhotoXML(zip, grid.base64, grid.W, grid.H); }
+    const out=zip.generate({type:'blob'});
+    const ds=new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(out); a.download=cname+'_尽调报告_'+ds+'.docx'; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href); a.remove();},1200);
+    if(logEl) logEl.textContent='✅ 已生成 DOCX';
+  }catch(e){
+    console.error(e);
+    alert('生成失败：'+(e&&e.message?e.message:e));
+    const logEl=document.getElementById('log'); if(logEl) logEl.textContent='❌ 生成失败';
+  }
+}
+const btnGen=document.getElementById('btnGen'); if(btnGen) btnGen.onclick=generate;
+
+// ---------- OCR（可选） ----------
+let ocrReady=false;
+const ocrSwitch=document.getElementById('ocrOn');
+if(ocrSwitch){
+  ocrSwitch.addEventListener('change', async (e)=>{
+    const log=document.getElementById('ocrLog');
+    if(!e.target.checked){ ocrReady=false; if(log) log.textContent='未启用'; return; }
+    if(log) log.textContent='加载中…';
+    try{ await loadScript('https://unpkg.com/tesseract.js@5.1.0/dist/tesseract.min.js'); ocrReady=true; if(log) log.textContent='已启用'; }
+    catch(_){ ocrReady=false; if(log) log.textContent='加载失败（不影响生成）'; alert('OCR加载失败，不影响生成。'); }
+  });
+}
+const btnOcr=document.getElementById('btnDoOcr');
+if(btnOcr){
+  btnOcr.onclick=async function(){
+    if(!ocrReady){ alert('请先打开“启用OCR”'); return; }
+    const files=document.getElementById('ocrFiles').files; if(!files.length){ alert('请选择要识别的图片'); return; }
+    const log=document.getElementById('ocrLog'); if(log) log.textContent='识别中…';
+    try{
+      let text='';
+      for(const f of files){
+        const b=await f.arrayBuffer(); const blob=new Blob([b]); const url=URL.createObjectURL(blob);
+        const r=await Tesseract.recognize(url,'chi_sim+eng');
+        text+='\n[OCR]\n'+r.data.text.trim();
+        URL.revokeObjectURL(url);
+      }
+      const notes=document.getElementById('notes'); notes.value = (notes.value+'\n'+text).trim();
+      if(log) log.textContent='已写入补充说明';
+    }catch(e){ console.error(e); alert('OCR失败，不影响生成'); const log=document.getElementById('ocrLog'); if(log) log.textContent='失败（不影响生成）'; }
+  };
+}
+
+// ---------- 开发测试（防回归） ----------
+function assert(name, cond){ if(!cond) { console.error('❌ 测试失败：'+name); } else { console.log('✅ 测试通过：'+name); } }
+function runTests(){
+  // 1) 占位替换
+  const src='客户:{{客户名称}}, 行业:{{ 行业分类 }} -- 图:{{走访照片}}';
+  const out=replacePlaceholders(src,{ '客户名称':'A', '行业分类':'B' });
+  assert('占位替换字符串', out.includes('客户:A') && out.includes('行业:B') && out.includes('[[PHOTO]]'));
+  // 2) 自动类型判断
+  assert('自动类型-一般', autoType(['G1','G2'])==='一般');
+  assert('自动类型-强化', autoType(['G1','E2'])==='强化');
+  // 3) nextRid 解析
+  const rels='<Relationships><Relationship Id="rId9"/><Relationship Id="rId12"/></Relationships>';
+  assert('nextRid', nextRid(rels)==='rId13');
+  // 4) 无照片时 grid 为空
+  const saved=picked; picked=[]; Promise.resolve(buildPhotoGrid()).then((g)=>assert('无照片 grid', g===null)); picked=saved;
+}
+runTests();
+</script>
+</body>
+</html>

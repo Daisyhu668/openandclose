@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>销户尽调 · 一键生成</title>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+
+<style>
+/* ===========================
+   Apple 风（Indigo → Cyan）
+   =========================== */
+:root{
+  --bg1:#eef2ff;        /* indigo-50 */
+  --bg2:#f0fdff;        /* cyan-50   */
+  --card:#ffffff;
+  --ink:#0b1220;
+  --muted:#667085;
+  --line:#eceff5;
+  --accent:#4f46e5;     /* indigo-600 */
+  --accent2:#06b6d4;    /* cyan-500   */
+  --radius:18px; --rsm:12px;
+  --shadow:0 18px 40px rgba(79,70,229,.15),0 6px 18px rgba(16,24,40,.06);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:linear-gradient(160deg,var(--bg1) 0%,#f6f7ff 50%,var(--bg2) 100%);
+  font:15.5px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--ink);
+}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 16px 120px}
+
+/* 顶部 */
+header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.logo{width:42px;height:42px;border-radius:12px;background:
+  conic-gradient(from 210deg at 50% 50%,var(--accent),#6366f1 35%,#22d3ee 70%,var(--accent));
+  box-shadow:0 10px 26px rgba(79,70,229,.28),0 2px 8px rgba(16,24,40,.08)}
+h1{margin:0;font-weight:800;font-size:clamp(20px,2.6vw,28px);letter-spacing:.2px;
+   background:linear-gradient(90deg,#0b1220 0%,#334155 50%,#0b1220 100%);
+   -webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* 网格 & 卡片 */
+.grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;inset:-32% -30% auto auto;height:180px;width:180px;border-radius:50%;
+  background:radial-gradient(60px 60px at 30% 30%,rgba(79,70,229,.22),transparent 70%),
+             radial-gradient(80px 80px at 70% 60%,rgba(6,182,212,.22),transparent 70%);
+  filter:blur(18px);opacity:.7;pointer-events:none}
+.section-title{font-weight:700;margin:3px 0 10px;letter-spacing:.2px}
+
+.row{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;margin:10px 0}
+label{color:#475569}
+input[type=text],textarea{width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--ink);padding:12px 14px;outline:none;transition:border .15s,box-shadow .15s}
+input[type=text]:focus,textarea:focus{border-color:#c7d2fe;box-shadow:0 0 0 5px rgba(79,70,229,.08)}
+textarea{min-height:110px}
+
+/* 芯片 */
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1px solid #e2e8f0;border-radius:999px;padding:8px 14px;background:linear-gradient(180deg,#fff,#f8fafc);
+  color:#0b1220;cursor:pointer;transition:all .15s ease;box-shadow:inset 0 -1px 0 rgba(0,0,0,.03)}
+.chip:hover{transform:translateY(-1px)}
+.chip.sel{background:linear-gradient(180deg,#4f46e5,#06b6d4);color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(6,182,212,.28)}
+
+/* 按钮 */
+.btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:12px;padding:12px 16px;color:#fff;
+  background:linear-gradient(90deg,var(--accent) 0%,var(--accent2) 100%);box-shadow:0 10px 24px rgba(79,70,229,.28);cursor:pointer;font-weight:700;letter-spacing:.2px}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:#f1f5ff;color:#1f2a44;border:1px solid var(--line);box-shadow:none}
+.btn.badge{padding:8px 12px;border-radius:999px;font-weight:700}
+
+@media (max-width:860px){.grid2{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-hidden="true"></div>
+    <h1>销户尽调 · 一键生成</h1>
+  </header>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="section-title">① 基本信息</div>
+      <div class="row"><label>企业名称</label><input id="company" type="text" placeholder="如：厦门利邦荣财务有限责任公司"/></div>
+      <div class="row"><label>账户类型</label>
+        <div class="chips" id="acctChips">
+          <span class="chip" data-v="基本户">基本户</span>
+          <span class="chip" data-v="一般户">一般户</span>
+          <span class="chip" data-v="专用户">专用户</span>
+          <span class="chip" data-v="共管户">共管户</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">② 模板（仅首次导入）</div>
+      <div class="row"><label>导入/替换</label>
+        <div>
+          <input id="tpl" type="file" accept=".docx"/>
+          <div style="margin-top:8px;display:flex;gap:10px;align-items:center">
+            <button class="btn ghost" id="btnCache">缓存模板</button>
+            <button class="btn ghost" id="btnClear">清除缓存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">③ 销户原因（可多选）</div>
+    <div class="chips" id="reasonChips"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="section-title">④ 合作收益（自动补全 | 可锁定）</div>
+      <div style="display:flex;gap:10px;margin-bottom:8px">
+        <button class="btn badge" id="btnLock">未锁定</button>
+        <button class="btn badge" id="btnCoopFill">重新补全</button>
+      </div>
+      <textarea id="coop" placeholder="将基于所选原因自动生成；可手动微调。"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="section-title">⑤ 挽留/办理意见（自动补全）</div>
+      <div style="display:flex;gap:10px;margin-bottom:8px">
+        <button class="btn badge" id="btnRetainFill">重新补全</button>
+      </div>
+      <textarea id="retain" placeholder="将基于所选原因自动生成；可手动微调。"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">⑥ 生成</div>
+    <button class="btn" id="btnGen">一键生成 DOCX</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* =============== 轻量工具 =============== */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const KEY_TPL = 'CLOSE_TPL_B64';
+
+/* =============== 交互：芯片选择 =============== */
+document.body.addEventListener('click', (e)=>{
+  const t = e.target;
+  if(!(t instanceof HTMLElement) || !t.classList.contains('chip')) return;
+  const g = t.parentElement;
+  if(!g) return;
+  if(g.id==='acctChips'){ // 单选
+    g.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));
+    t.classList.add('sel');
+  }else if(g.id==='reasonChips'){ // 多选
+    t.classList.toggle('sel');
+    autoFill(); // 原因变更时自动直填
+  }
+});
+
+/* =============== 数据库：原因 / 合作收益 / 挽留意见 =============== */
+const REASONS = [
+  {id:'R01', name:'账户长期闲置/交易频次极低'},
+  {id:'R02', name:'项目阶段性结束，后续无交易'},
+  {id:'R03', name:'企业完成工商注销或筹备注销'},
+  {id:'R04', name:'账户结构优化/多账户并行整合'},
+  {id:'R05', name:'内部治理/财务重组导致账户清理'},
+  {id:'R06', name:'并购重组/主体迁移导致账户终止'},
+  {id:'R07', name:'业务转移至集团统一平台结算'},
+  {id:'R08', name:'政策/监管口径调整压降账户数量'},
+  {id:'R09', name:'账户使用场景消失/系统替代'},
+  {id:'R10', name:'账户仅短期过渡使用，现无保留必要'},
+  {id:'R11', name:'客户战略收缩，区域业务撤点'},
+  {id:'R12', name:'历史遗留账户清理（无沉淀/无交易）'},
+  {id:'R13', name:'其他（现场确认无风险事项）'}
+];
+
+const COOP_BY_REASON = {
+  R01:[
+    '账户以基础结算为主，近一年交易频次偏低，未形成有效沉淀；无授信/票据业务，对中收贡献有限。',
+    '年内日均不足 1 万元，未开展代发、缴税、POS 等功能性合作，收益边际较低。',
+    '零星往来为主，无贴现/理财/结售汇等延伸合作，对我行整体收益影响较小。',
+    '活跃度与同业对标偏低，综合收益可忽略，对账面贡献有限。'
+  ],
+  R02:[
+    '账户用于阶段性项目结算，项目收尾后交易量趋零，未形成持续性业务；对综合收益影响有限。',
+    '专项资金结算完成，余额与流水显著下降，后续不具备稳定使用场景。'
+  ],
+  R03:[
+    '企业主体办理/筹备工商注销，账户同步清理；无未结清授信、票据或担保责任。',
+    '注销流程核验中，账户余额为零或接近零，历史交易合规，无未决事项。'
+  ],
+  R04:[
+    '客户进行账户结构压降与统一管理，本账户与主账户功能重叠，使用边际较低。',
+    '从资金效率与账户治理角度优化数量，对我行结算留存及中收影响可控。'
+  ],
+  R05:[
+    '内部治理与财务架构调整，结算路径重梳；该账户定位弱化，近年未产生中间业务收益。',
+    '重组期间交易迁移至新体系，本账户不再纳入常态化使用。'
+  ],
+  R06:[
+    '并购整合导致主体迁移/账号变更，历史结算已完成；既有收益影响有限。',
+    '并表后现金管理集中至集团平台，本账户不再承担收支功能。'
+  ],
+  R07:[
+    '集团资金集中管控，收付由统一平台承担；本账户留存意义不强，收益影响可控。',
+    '结算迁移后账户交易显著下降，未形成中间业务收入。'
+  ],
+  R08:[
+    '合规治理与内部管理口径下，客户压降低活跃账户；对收益影响可控。',
+    '账户合并与撤并属正常管理行为，未对既有合作造成不利影响。'
+  ],
+  R09:[
+    '内部系统替代原有账户功能，相关收付场景消失；无授信/票据/代发等衍生合作。',
+    '新系统上线后交易减少至偶发，综合收益有限。'
+  ],
+  R10:[
+    '过渡期结算任务完成，账户余额已清；未形成稳定合作项目。',
+    '临时性往来结束，后续不具备保留必要。'
+  ],
+  R11:[
+    '客户区域业务收缩，线下网点撤并；活跃度与贡献度同步下降。',
+    '战略调整导致结算迁移，本账户对收益贡献趋零。'
+  ],
+  R12:[
+    '历史遗留账户清理，近年无交易或低频交易；无授信或票据类业务。',
+    '例行治理盘点清退，对我行收益影响不大。'
+  ],
+  R13:[
+    '客户提出账户清理需求，资料真实有效；整体收益有限、影响可控。',
+    '结合阶段性经营安排，账户留存意义不强，对收益影响可忽略。'
+  ]
+};
+
+const RETAIN_BY_REASON = {
+  R01:[
+    '建议保留单一主账户提升资金效率；客户确认本账户无保留必要。余额为零，无未结清票据/手续费等事项，按流程受理销户。'
+  ],
+  R02:[
+    '项目结算完成，客户确认后续无交易安排；核验无未决事项与风险提示，予以销户处理。'
+  ],
+  R03:[
+    '与工商注销进程同步，完成余额清理及凭证核验；无授信担保/未清算票据，资料完备，按程序办理。'
+  ],
+  R04:[
+    '支持账户治理优化，在确保主账户正常使用前提下，办理本账户销户；综合评估合规与资金效率后同意。'
+  ],
+  R05:[
+    '重组期间交易迁移与余额核对已完成；审查无风险敞口与未决事项，依规处理。'
+  ],
+  R06:[
+    '并购事项导致主体迁移，凭证齐备；完成信息核清后按流程注销。'
+  ],
+  R07:[
+    '集团资金集中管理落地，客户确认集中平台稳定运行；本账户不再使用，核验合规后办理。'
+  ],
+  R08:[
+    '客户主动压降账户，资料完备；未涉及冻结/司法/票据限制，按规范注销。'
+  ],
+  R09:[
+    '系统替代导致场景退出，客户确认无后续用途；核对历史流水合规无异常后办理销户。'
+  ],
+  R10:[
+    '过渡期任务结束且余额清零；无未决事项，立即受理并办理销户。'
+  ],
+  R11:[
+    '根据客户战略调整，在确保主账户正常的前提下予以销户；现场核验无风险事项。'
+  ],
+  R12:[
+    '例行清理类账户，履行确认程序后予以注销；客户确认历史账务无遗留。'
+  ],
+  R13:[
+    '客户主动提出销户，资料核验无异常；经确认无风险事项/未决业务，予以办理。'
+  ]
+};
+
+/* 渲染原因芯片 */
+(function renderReasons(){
+  const box = $('#reasonChips'); if(!box) return;
+  box.innerHTML='';
+  REASONS.forEach(r=>{
+    const el=document.createElement('span');
+    el.className='chip'; el.dataset.id=r.id; el.textContent=r.id+' · '+r.name;
+    box.appendChild(el);
+  });
+})();
+
+/* =============== 模板缓存（localStorage） =============== */
+$('#btnCache').onclick = async ()=>{
+  const f = $('#tpl').files[0]; if(!f){ alert('请选择 .docx 模板'); return; }
+  const b = await f.arrayBuffer();
+  const base64 = await new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.readAsDataURL(new Blob([b])); });
+  localStorage.setItem(KEY_TPL, base64);
+  alert('模板已缓存（仅需一次）');
+};
+$('#btnClear').onclick = ()=>{ localStorage.removeItem(KEY_TPL); alert('已清除模板缓存'); };
+
+/* =============== 智能直填（自动+按钮） =============== */
+let coopLocked=false;
+$('#btnLock').onclick = ()=>{ coopLocked=!coopLocked; $('#btnLock').textContent=coopLocked?'已锁定':'未锁定'; };
+
+function buildCoopText(ids){
+  let pool=[]; ids.forEach(id=>{ if(COOP_BY_REASON[id]) pool=pool.concat(COOP_BY_REASON[id]); });
+  if(!pool.length){
+    pool = [
+      '账户以基础结算为主，活跃度较低；未形成中间业务收入，整体影响可控。'
+    ];
+  }
+  const uniq=[...new Set(pool)].slice(0,4);
+  return uniq.map((t,i)=> (i+1)+'. '+t).join('\n');
+}
+function buildRetainText(ids){
+  let pool=[]; ids.forEach(id=>{ if(RETAIN_BY_REASON[id]) pool=pool.concat(RETAIN_BY_REASON[id]); });
+  if(!pool.length){
+    pool = ['客户确认余额为零且无未决事项，资料完备；按流程办理销户。'];
+  }
+  const uniq=[...new Set(pool)].slice(0,4);
+  return uniq.map((t,i)=> (i+1)+'. '+t).join('\n');
+}
+function autoFill(){
+  const ids = $$('#reasonChips .chip.sel').map(x=>x.dataset.id);
+  const coopTA=$('#coop'), retainTA=$('#retain');
+  if(coopTA && (!coopLocked || !coopTA.value.trim())){
+    coopTA.value = buildCoopText(ids);
+  }
+  if(retainTA && !retailUserEdited){
+    retainTA.value = buildRetainText(ids);
+  }
+}
+let retailUserEdited=false;
+$('#retain').addEventListener('input',()=>{ retailUserEdited=true; });
+
+$('#btnCoopFill').onclick = ()=>{ const ids=$$('#reasonChips .chip.sel').map(x=>x.dataset.id); if(!coopLocked){ $('#coop').value=buildCoopText(ids); } else { alert('合作收益已锁定，未改动'); } };
+$('#btnRetainFill').onclick = ()=>{ const ids=$$('#reasonChips .chip.sel').map(x=>x.dataset.id); $('#retain').value=buildRetainText(ids); };
+
+/* =============== 生成 DOCX（PizZip 直接改 XML） =============== */
+function loadScript(url){
+  return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=url; s.onload=()=>res(); s.onerror=()=>rej(new Error('加载失败:'+url)); document.head.appendChild(s); });
+}
+async function ensureZip(){
+  if(window.PizZip) return;
+  const urls=[ './pizzip.min.js','./pizzip.js','/pizzip.min.js','/pizzip.js',
+               'https://unpkg.com/pizzip@3.1.7/dist/pizzip.min.js',
+               'https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.min.js' ];
+  for(const u of urls){ try{ await loadScript(u); if(window.PizZip) return; }catch(_){} }
+  throw new Error('核心库未就绪：请把 pizzip.min.js 放在同目录，或联网一次。');
+}
+function escapeXml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function replacePlaceholders(xml, map){
+  for(const k in map){ if(!Object.prototype.hasOwnProperty.call(map,k)) continue; const v=map[k];
+    const safe=escapeXml(v==null?'':String(v));
+    const p1='{{'+k+'}}'; const p2='{{ '+k+' }}';
+    xml=xml.split(p1).join(safe); xml=xml.split(p2).join(safe);
+  }
+  return xml;
+}
+
+async function generate(){
+  try{
+    await ensureZip();
+    const b64 = localStorage.getItem(KEY_TPL);
+    if(!b64){ alert('请先导入并缓存模板'); return; }
+    const cname = $('#company').value.trim(); if(!cname){ alert('请填写企业名称'); return; }
+    const acctEl = $('#acctChips .chip.sel'); if(!acctEl){ alert('请选择账户类型'); return; }
+    const acct = acctEl.dataset.v;
+
+    const reasonIds = $$('#reasonChips .chip.sel').map(x=>x.dataset.id);
+    const reasonTexts = REASONS.filter(r=> reasonIds.includes(r.id)).map(r=> r.name);
+    const reasonStr = reasonTexts.length? reasonTexts.map((t,i)=> (i+1)+'. '+t).join('\n') : '1. 客户确认账户无保留必要；现场核验资料真实有效。';
+
+    const coop = ($('#coop').value||'').trim() || buildCoopText(reasonIds);
+    const retain = ($('#retain').value||'').trim() || buildRetainText(reasonIds);
+
+    const ab = Uint8Array.from(atob(b64), c=>c.charCodeAt(0));
+    const zip = new PizZip(ab);
+    const xmlPath = 'word/document.xml';
+    let xml = zip.file(xmlPath).asText();
+    xml = replacePlaceholders(xml, {
+      '企业名称': cname,
+      '账户类型': acct,
+      '销户原因': reasonStr,
+      '合作收益': coop,
+      '挽留措施': retain
+    });
+    zip.file(xmlPath, xml);
+
+    const out = zip.generate({type:'blob'});
+    const ds = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const a = document.createElement('a'); a.href=URL.createObjectURL(out); a.download=cname+'_销户申请_'+ds+'.docx';
+    document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1200);
+  }catch(e){ console.error(e); alert('生成失败：'+(e&&e.message?e.message:e)); }
+}
+$('#btnGen').onclick = generate;
+
+/* 初始：自动补全一次（为空才写） */
+autoFill();
+</script>
+</body>
+</html>
