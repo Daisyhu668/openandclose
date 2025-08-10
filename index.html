@@ -3,6 +3,16 @@
   <a href="./index.html" style="text-decoration:none;padding:6px 10px;border:1px solid #e5e7eb;border-radius:10px;">开户尽调</a>
   <a href="./closegen.html" style="text-decoration:none;padding:6px 10px;border:1px solid #e5e7eb;border-radius:10px;">销户尽调</a>
 </nav>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a84ff">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/openandclose/sw.js');
+  });
+}
+</script>
 <!doctype html>
 <html lang="zh-CN">
 <head>
