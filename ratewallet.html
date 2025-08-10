@@ -2,72 +2,55 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>利率优惠签报 · 智能生成</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>利率优惠签报 · 纯文本一键复制（含OCR）</title>
 <style>
-/* ====== 日系动漫风（淡粉/雾紫/蔚蓝） ====== */
-:root{
-  --bg1:#fff1f7; --bg2:#eef2ff; --bg3:#e6fcff;
-  --paper:rgba(255,255,255,.9); --line:#e9edf6; --ink:#0f172a; --muted:#667085;
-  --p1:#f472b6; /* pink-400 */
-  --p2:#a78bfa; /* violet-400 */
-  --p3:#60a5fa; /* blue-400 */
-  --ok:#34d399; --warn:#fb923c;
-  --r:18px; --shadow:0 18px 40px rgba(15,23,42,.08),0 6px 18px rgba(15,23,42,.06);
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font:15.5px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",Segoe UI,Roboto,Helvetica,Arial;color:var(--ink)}
-body{
-  background:
-    radial-gradient(60vmax 60vmax at -10% 0%, rgba(244,114,182,.18), transparent 60%),
-    radial-gradient(60vmax 60vmax at 110% 10%, rgba(96,165,250,.18), transparent 60%),
-    radial-gradient(60vmax 60vmax at 50% 120%, rgba(167,139,250,.16), transparent 60%),
-    linear-gradient(180deg,#fff 0%, #fafaff 60%, #f4f7ff 100%);
-}
-.wrap{max-width:1180px;margin:0 auto;padding:26px 16px 120px}
-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
-.logo{width:44px;height:44px;border-radius:14px;background:
-  conic-gradient(from 210deg at 50% 50%, var(--p1), var(--p2) 35%, var(--p3) 70%, var(--p1));
-  box-shadow:0 10px 26px rgba(167,139,250,.28)}
-h1{margin:0;font-weight:800;font-size:clamp(20px,2.6vw,28px);letter-spacing:.2px;
-   background:linear-gradient(90deg,#0b1220 0%,#374151 50%,#0b1220 100%);
-   -webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{color:#6b7280;font-size:13px}
+  :root{
+    /* 清爽苹果风 + 细微动效 */
+    --bg1:#f7f8fc; --bg2:#eef2ff;
+    --paper:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e5e7eb;
+    --brand:#0a84ff; --brand2:#64d2ff; --ok:#34c759; --warn:#ff9f0a;
+    --radius:16px; --shadow:0 10px 24px rgba(15,23,42,.06),0 2px 6px rgba(15,23,42,.04);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font:15.5px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",Segoe UI,Roboto,Helvetica,Arial;color:var(--ink);
+    background:linear-gradient(160deg,var(--bg1),var(--bg2))}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px 16px 120px}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .logo{width:40px;height:40px;border-radius:12px;background:
+    conic-gradient(from 220deg,var(--brand),#0f7dff 40%,var(--brand2) 80%,var(--brand));
+    box-shadow:0 8px 18px rgba(10,132,255,.25)}
+  h1{margin:0;font-weight:750;font-size:clamp(19px,2.4vw,26px);
+    background:linear-gradient(90deg,#0f172a,#334155,#0f172a);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:13px}
 
-.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
-.card{background:var(--paper);backdrop-filter:saturate(170%) blur(10px);
-      border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
-.section-title{font-weight:700;margin:2px 0 10px;letter-spacing:.2px}
+  .grid2{display:grid;grid-template-columns:1.06fr .94fr;gap:14px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+  .section-title{font-weight:700;margin:2px 0 10px}
+  .row{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;margin:10px 0}
+  label{color:#475569}
+  input[type=text], input[type=number], textarea{
+    width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--ink);
+    padding:11px 12px;outline:none;transition:border .15s,box-shadow .15s
+  }
+  input:focus,textarea:focus{border-color:#c7d2fe;box-shadow:0 0 0 4px rgba(10,132,255,.08)}
+  textarea{min-height:120px}
+  input[type=file]{font-size:13px;color:#475569}
 
-.row{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center;margin:10px 0}
-label{color:#475569}
-input[type=text],input[type=number],select,textarea{
-  width:100%;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--ink);
-  padding:12px 14px;outline:none;transition:border .15s,box-shadow .15s
-}
-input:focus,select:focus,textarea:focus{border-color:#d3ddff;box-shadow:0 0 0 5px rgba(96,165,250,.12)}
-textarea{min-height:110px}
-.hint{color:#6b7280;font-size:12.5px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1px solid #dde3f0;border-radius:999px;padding:7px 12px;background:linear-gradient(180deg,#fff,#f7f9fd);
+    color:#1f2a44;cursor:pointer;transition:all .15s ease;box-shadow:inset 0 -1px 0 rgba(0,0,0,.03)}
+  .chip:hover{transform:translateY(-1px)}
+  .chip.sel{background:linear-gradient(180deg,#2563eb,#1d4ed8);color:#fff;border-color:transparent;box-shadow:0 6px 14px rgba(37,99,235,.25)}
 
-.chips{display:flex;flex-wrap:wrap;gap:10px}
-.chip{border:1px solid #e6e9f5;border-radius:999px;padding:8px 14px;background:linear-gradient(180deg,#fff,#f8fafc);
-      color:#1f2a44;cursor:pointer;transition:all .15s;box-shadow:inset 0 -1px 0 rgba(0,0,0,.03)}
-.chip:hover{transform:translateY(-1px)}
-.chip.sel{background:linear-gradient(92deg,var(--p1), var(--p2) 50%, var(--p3));color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(96,165,250,.28)}
-
-.gridP{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.thumb{width:100%;aspect-ratio:4/3;border-radius:14px;object-fit:cover;background:#f0f3fa;border:1px solid var(--line)}
-
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(255,255,255,.84);
-      backdrop-filter:saturate(160%) blur(10px);border-top:1px solid var(--line)}
-.dock-inner{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
-.btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:12px;padding:12px 16px;color:#fff;
-     background:linear-gradient(90deg,var(--p2), var(--p3));box-shadow:0 10px 24px rgba(96,165,250,.28);cursor:pointer;font-weight:700;letter-spacing:.2px}
-.btn.kawaii{border-radius:999px;padding:10px 16px}
-.btn.ghost{background:#f3f6ff;color:#1f2a44;border:1px solid var(--line);box-shadow:none}
-.btn:active{transform:translateY(1px)}
-
-@media (max-width:880px){.grid2{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
+  .dock{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.82);backdrop-filter:saturate(160%) blur(10px);
+    border-top:1px solid var(--line);z-index:20}
+  .dock-inner{max-width:1100px;margin:0 auto;padding:10px 14px;display:flex;gap:10px;align-items:center}
+  .btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:12px;padding:11px 14px;color:#fff;
+    background:linear-gradient(90deg,var(--brand),var(--brand2));box-shadow:0 10px 22px rgba(10,132,255,.25);cursor:pointer;font-weight:700}
+  .btn.ghost{background:#eef2ff;color:#1f2a44;border:1px solid var(--line);box-shadow:none}
+  .hint{color:var(--muted);font-size:12.5px}
+  @media (max-width:860px){.grid2{grid-template-columns:1fr}.row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -75,401 +58,333 @@ textarea{min-height:110px}
   <header>
     <div class="logo" aria-hidden="true"></div>
     <div>
-      <h1>利率优惠签报 · 智能生成</h1>
-      <div class="sub">厦门分行默认 · 科技业务部默认（可改） · 本地生成DOCX · EVA截图可合成插入</div>
+      <h1>利率优惠签报 · 文本生成 & 一键复制</h1>
+      <div class="sub">本地生成，不上传；可选OCR识别EVA；长按或点按钮即可复制全文</div>
     </div>
   </header>
 
   <div class="grid2">
     <div class="card">
-      <div class="section-title">① 基本参数</div>
-      <div class="row"><label>分行</label><input id="org" type="text" value="厦门分行"></div>
-      <div class="row"><label>部门</label><input id="dept" type="text" value="科技业务部"></div>
-      <div class="row"><label>客户名称</label><input id="company" type="text" placeholder="如：三口"></div>
-      <div class="row"><label>金额（万元）</label><input id="amt" type="number" step="1" placeholder="如：500"></div>
-      <div class="row"><label>期限</label>
-        <select id="tenor">
-          <option>6个月</option><option selected>1年</option><option>2年</option><option>3年</option><option>4年</option><option>5年</option>
-        </select>
-      </div>
-      <div class="row"><label>贷款品种</label>
-        <select id="prod">
-          <option>科技贷</option><option>税易贷</option><option>成长伴侣</option><option>流动资金贷款</option>
-          <option>固定资产贷款</option><option>抵押贷款</option><option>信用贷款</option><option>其他</option>
-        </select>
-      </div>
-      <div class="row"><label>执行利率（%）</label><input id="rateExec" type="number" step="0.01" placeholder="如：2.60"></div>
-      <div class="row"><label>LPR基准（%）</label><input id="lpr" type="number" step="0.01" value="3.00"></div>
-      <div class="row"><label>FTP指引（%）</label><input id="ftp" type="number" step="0.01" value="1.80"></div>
+      <div class="section-title">① 基本信息</div>
+      <div class="row"><label>分行</label><input id="branch" type="text" value="厦门分行"/></div>
+      <div class="row"><label>部门</label><input id="dept" type="text" value="科技业务部"/></div>
+      <div class="row"><label>企业名称</label><input id="company" type="text" placeholder="如：厦门利邦荣财务有限责任公司"/></div>
       <div class="row"><label>审批权限</label>
-        <select id="appr">
-          <option value="分行权限—普惠小微（1年期）">分行权限—普惠小微（1年期）</option>
-          <option value="分行权限—科技/绿色企业（1年期）">分行权限—科技/绿色企业（1年期）</option>
-          <option value="分行权限—一般工商贷款（1年期）">分行权限—一般工商贷款（1年期）</option>
-          <option value="总行授权—特殊项目">总行授权—特殊项目</option>
-          <option value="自定义">自定义（下方填写）</option>
-        </select>
+        <div class="chips" id="permChips">
+          <span class="chip sel" data-v="分行审批权限">分行审批权限</span>
+          <span class="chip" data-v="二级分行审批权限">二级分行审批权限</span>
+          <span class="chip" data-v="总行授权范围内">总行授权范围内</span>
+          <span class="chip" data-v="其他">其他</span>
+        </div>
       </div>
-      <div class="row" id="apprCustomRow" style="display:none"><label>自定义权限</label><input id="apprCustom" type="text" placeholder="输入审批权限描述"></div>
-      <div class="row">
-        <label>是否有存量</label>
-        <div class="chips"><span class="chip sel" data-v="无">无</span><span class="chip" data-v="有" id="hasStockChip">有</span></div>
+      <div class="row"><label>授信品种</label>
+        <div class="chips" id="prodChips">
+          <span class="chip sel" data-v="普惠小微贷款">普惠小微贷款</span>
+          <span class="chip" data-v="科技金融贷款">科技金融贷款</span>
+          <span class="chip" data-v="绿色金融贷款">绿色金融贷款</span>
+          <span class="chip" data-v="一般工商贷款">一般工商贷款</span>
+        </div>
       </div>
-      <div class="row" id="stockRow" style="display:none"><label>存量执行利率（%）</label><input id="rateStock" type="number" step="0.01" placeholder="如：3.20"></div>
+      <div class="row"><label>客群/资质</label>
+        <div class="chips" id="segChips">
+          <span class="chip sel" data-v="普惠小微">普惠小微</span>
+          <span class="chip" data-v="科技企业">科技企业</span>
+          <span class="chip" data-v="绿色企业">绿色企业</span>
+          <span class="chip" data-v="一般客群">一般客群</span>
+          <span class="chip" data-v="上市公司">上市公司</span>
+          <span class="chip" data-v="台资企业">台资企业</span>
+          <span class="chip" data-v="国有控股">国有控股</span>
+          <span class="chip" data-v="民营控股">民营控股</span>
+        </div>
+      </div>
     </div>
 
     <div class="card">
-      <div class="section-title">② 客群与资质</div>
-      <div class="row"><label>客群类别（多选）</label>
-        <div class="chips" id="segChips">
-          <span class="chip" data-v="普惠小微">普惠小微</span>
-          <span class="chip" data-v="科技">科技</span>
-          <span class="chip" data-v="绿色">绿色</span>
-          <span class="chip" data-v="台商">台商</span>
-          <span class="chip" data-v="上市公司">上市公司</span>
-          <span class="chip sel" data-v="一般客群">一般客群</span>
-        </div>
-      </div>
-      <div class="row"><label>资质标签（多选）</label>
-        <div class="chips" id="tagChips">
-          <span class="chip" data-v="民营控股">民营控股</span>
-          <span class="chip" data-v="国有/地方国企控股">国有/地方国企控股</span>
-          <span class="chip" data-v="台资企业">台资企业</span>
-          <span class="chip" data-v="外资独资或合资">外资独资或合资</span>
-          <span class="chip" data-v="高新技术企业">高新技术企业</span>
-          <span class="chip" data-v="专精特新“小巨人”">专精特新“小巨人”</span>
-          <span class="chip" data-v="绿色目录符合">绿色目录符合</span>
-        </div>
-      </div>
-      <div class="row"><label>经营与信用（多选）</label>
-        <div class="chips" id="opChips">
-          <span class="chip" data-v="成立年限长、经营稳健，收入与利润保持增长">成立年限长、经营稳健，收入与利润保持增长</span>
-          <span class="chip" data-v="处于行业中高端，具备技术壁垒与稳定客户群">处于行业中高端，具备技术壁垒与稳定客户群</span>
-          <span class="chip" data-v="与我行往来稳定，账户交易正常、结算集中度高">与我行往来稳定，账户交易正常、结算集中度高</span>
-        </div>
-      </div>
-      <div class="row"><label>担保方式（多选）</label>
-        <div class="chips" id="grtChips">
-          <span class="chip" data-v="不动产抵押">不动产抵押</span>
-          <span class="chip" data-v="担保公司100%保证">担保公司100%保证</span>
-          <span class="chip" data-v="知识产权质押">知识产权质押</span>
-          <span class="chip" data-v="信用/保证方式">信用/保证方式</span>
-        </div>
-      </div>
-      <div class="row"><label>补充说明</label><textarea id="notes" placeholder="可留空；如：配套代发/结算推进等"></textarea></div>
+      <div class="section-title">② 关键参数</div>
+      <div class="row"><label>金额（万元）</label><input id="amt" type="number" inputmode="decimal" placeholder="如：500"/></div>
+      <div class="row"><label>期限</label><input id="tenor" type="text" placeholder="如：1年 / 12个月"/></div>
+      <div class="row"><label>执行利率（%）</label><input id="rate" type="number" inputmode="decimal" placeholder="如：2.60"/></div>
+      <div class="row"><label>存量利率（%）</label><input id="stockRate" type="number" inputmode="decimal" placeholder="可选，如：3.20"/></div>
+      <div class="row"><label>LPR（%）</label><input id="lpr" type="number" inputmode="decimal" value="3.00"/></div>
+      <div class="row"><label>FTP（%）</label><input id="ftp" type="number" inputmode="decimal" value="1.80"/></div>
     </div>
   </div>
 
   <div class="grid2">
     <div class="card">
-      <div class="section-title">③ EVA 截图（可多张）</div>
-      <input id="eva" type="file" accept="image/*" multiple/>
-      <div class="gridP" id="preview" style="margin-top:10px"></div>
-      <div class="hint">会自动合成 2 列拼图插入 Word。</div>
+      <div class="section-title">③ EVA（可手填或OCR识别）</div>
+      <div class="row"><label>EVA（数值）</label><input id="eva" type="number" inputmode="decimal" placeholder="如：0.86"/></div>
+      <div class="row"><label>上传截图</label>
+        <div>
+          <input id="evaImg" type="file" accept="image/*" multiple/>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <button class="btn ghost" id="btnOcr">OCR 识别 EVA</button>
+            <span class="hint" id="ocrLog">未识别</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
-      <div class="section-title">④ 预览（自动）</div>
-      <pre id="previewText" style="white-space:pre-wrap;margin:0"></pre>
+      <div class="section-title">④ 其他补充（可选）</div>
+      <textarea id="extra" placeholder="其他补充说明（如配套业务、代发、结算集中、风险控制等）"></textarea>
+      <div class="hint" style="margin-top:6px">不涉及“自律加点豁免”默认无需披露；如涉及，请在申请要素中自行补充。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">⑤ 预览与复制</div>
+    <textarea id="preview" readonly placeholder="这里将自动生成签报正文，长按可全选复制…"></textarea>
+    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+      <button class="btn" id="btnCopy">复制全文</button>
+      <span class="hint" id="copyHint">已实时生成，支持长按全选复制</span>
     </div>
   </div>
 </div>
 
 <div class="dock">
   <div class="dock-inner">
-    <button class="btn kawaii" id="btnGen">一键生成 DOCX</button>
-    <button class="btn ghost kawaii" id="btnRefresh">刷新预览</button>
-    <span class="hint" id="log" style="margin-left:auto">就绪</span>
+    <button class="btn ghost" id="btnReset">清空表单</button>
+    <span class="hint" id="status">就绪</span>
   </div>
 </div>
 
 <script>
 'use strict';
-/* ====== 小工具 ====== */
-const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
+const $ = s=>document.querySelector(s);
+const $$ = s=>Array.from(document.querySelectorAll(s));
 
-/* 芯片交互（多/单） */
-document.body.addEventListener('click', e=>{
-  const t=e.target; if(!(t instanceof HTMLElement)) return;
-  if(t.classList.contains('chip')){
-    const g=t.parentElement; if(!g) return;
-    if(g.classList.contains('chipsSingle')){ g.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel')); t.classList.add('sel'); }
-    else { t.classList.toggle('sel'); }
-    refreshPreview();
+/*—— 交互：chips ——*/
+document.body.addEventListener('click',(e)=>{
+  const t=e.target;
+  if(!(t instanceof HTMLElement) || !t.classList.contains('chip')) return;
+  const g=t.parentElement; if(!g) return;
+  // 审批权限、授信品种 → 单选；客群/资质 → 多选
+  if(g.id==='permChips' || g.id==='prodChips'){
+    g.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));
+    t.classList.add('sel');
+  }else{
+    t.classList.toggle('sel');
   }
+  buildPreview();
 });
 
-/* 审批权限自定义显示 */
-$('#appr').addEventListener('change', ()=>{
-  const v=$('#appr').value;
-  $('#apprCustomRow').style.display = v==='自定义' ? '' : 'none';
-  refreshPreview();
-});
+/*—— 文本工具 ——*/
+function bpDiff(rate, base){
+  if(!isFinite(rate)||!isFinite(base)) return '';
+  const bp=Math.round((rate-base)*100);
+  if(bp===0) return '与'+fmtPct(base)+'持平';
+  return (bp<0?('下浮 '+Math.abs(bp)+'BP'):('上浮 '+bp+'BP'))+'（较 '+fmtPct(base)+'）';
+}
+function ftpPhrase(rate, ftp){
+  if(!isFinite(rate)||!isFinite(ftp)) return '';
+  const bp=Math.round((rate-ftp)*100);
+  return (bp>=0?('高于 FTP（'+fmtPct(ftp)+'） '+bp+'BP'):('低于 FTP（'+fmtPct(ftp)+'） '+Math.abs(bp)+'BP'));
+}
+function fmtPct(v){ return isFinite(v)?(Number(v).toFixed(2)+'%'):'—' }
+function getSelText(boxId){ return $$('#'+boxId+' .chip.sel').map(x=>x.dataset.v) }
 
-/* 存量开关 */
-document.querySelectorAll('.chips .chip').forEach(ch=>{
-  if(ch.id==='hasStockChip' || ch.dataset.v==='无'){
-    ch.addEventListener('click', ()=>{
-      const yes = $('#hasStockChip').classList.contains('sel');
-      $('#stockRow').style.display = yes ? '' : 'none';
-    });
-  }
-});
-
-/* EVA 预览 */
-let evaFiles=[];
-$('#eva').addEventListener('change', e=>{
-  evaFiles = [...e.target.files];
-  const box = $('#preview'); box.innerHTML='';
-  evaFiles.forEach(f=>{
-    const url=URL.createObjectURL(f);
-    const img=new Image(); img.src=url; img.className='thumb';
-    img.onload=()=>URL.revokeObjectURL(url);
-    box.appendChild(img);
-  });
-});
-
-/* ====== 语义库（参数化短句） ====== */
-function bpWord(bp){ if(bp===0) return '与基准持平'; return (bp>0?'上浮':'下浮')+Math.abs(bp)+'BP'; }
-function n2(v){const x=parseFloat(v);return isFinite(x)?x.toFixed(2):'—';}
-
-/* 自动文案 */
-function buildTexts(){
-  const org = $('#org').value.trim()||'厦门分行';
-  const dept= $('#dept').value.trim()||'科技业务部';
-  const name= $('#company').value.trim()||'（客户名称）';
+/*—— 生成各段 ——*/
+function buildTitle(branch, dept, company){
+  const b = (branch||'').trim()||'厦门分行';
+  const d = (dept||'').trim()||'科技业务部';
+  const c = (company||'').trim()||'（填写企业名称）';
+  return `${b}${d}关于${c}贷款利率优惠的申请`;
+}
+function buildFactorSection(){
+  const perm = getSelText('permChips')[0]||'分行审批权限';
+  const prod = getSelText('prodChips')[0]||'普惠小微贷款';
   const amt = $('#amt').value.trim();
-  const tenor=$('#tenor').value.trim();
-  const prod = $('#prod').value.trim();
-  const r   = parseFloat($('#rateExec').value||0);
-  const lpr = parseFloat($('#lpr').value||0);
-  const ftp = parseFloat($('#ftp').value||0);
-  const apprSel = $('#appr').value;
-  const appr = apprSel==='自定义' ? ($('#apprCustom').value.trim()||'审批权限') : apprSel;
+  const tenor = $('#tenor').value.trim();
+  const rate = parseFloat($('#rate').value);
+  const stock = parseFloat($('#stockRate').value);
+  const lpr = parseFloat($('#lpr').value||'3.00');
+  const ftp = parseFloat($('#ftp').value||'1.80');
 
-  const hasStock = $('#hasStockChip').classList.contains('sel');
-  const rStock = parseFloat($('#rateStock').value||0);
+  const line1 = `- 对应审批权限：${perm}。`;
+  const line2 = `- 申请事项：金额 ${amt||'—'} 万元，期限 ${tenor||'—'}，授信品种 ${prod}，拟执行利率 ${isFinite(rate)?fmtPct(rate):'—'}。`;
+  const line3 = isFinite(rate)&&isFinite(lpr) ? `- 利率口径：较一年期 LPR ${bpDiff(rate,lpr)}；${ftpPhrase(rate,ftp)}。` : `- 利率口径：—。`;
+  const line4 = isFinite(stock) ? `- 存量贷款执行利率 ${fmtPct(stock)}，本次申请调整为 ${isFinite(rate)?fmtPct(rate):'—'}。` : null;
+  return ['二、贷款利率要素', line1, line2, line3].concat(line4?[line4]:[]).join('\n');
+}
+function buildQualification(){
+  const segs = getSelText('segChips');
+  const segLine = segs.length? `- 客群类别：${segs.join('、')}。` : `- 客群类别：一般客群。`;
+  // 资质措辞（通用、安全）
+  const qual = [
+    '- 股权与控股：治理结构清晰、实际控制人背景稳健，信用记录良好。',
+    '- 综合经营：经营真实有效，主营与行业对标匹配，账户交易正常、结算集中度较高。'
+  ];
+  return ['三、客户资质说明', segLine].concat(qual).join('\n');
+}
+function buildApplyReasons(){
+  const segs = getSelText('segChips');
+  const rate = parseFloat($('#rate').value);
+  const lpr = parseFloat($('#lpr').value||'3.00');
+  const ftp = parseFloat($('#ftp').value||'1.80');
+  const eva = parseFloat($('#eva').value);
+  const extra = $('#extra').value.trim();
 
-  const segs = $$('#segChips .chip.sel').map(x=>x.dataset.v);
-  const tags = $$('#tagChips .chip.sel').map(x=>x.dataset.v);
-  const ops  = $$('#opChips .chip.sel').map(x=>x.dataset.v);
-  const grts = $$('#grtChips .chip.sel').map(x=>x.dataset.v);
-  const notes= $('#notes').value.trim();
+  const lines = [];
+  // 资金成本与匹配性
+  const match = [];
+  if(segs.includes('绿色企业')) match.push('可匹配绿色债等低成本资金来源，资金成本可控');
+  if(segs.includes('科技企业')) match.push('可匹配科技债等低成本资金来源，资金成本可控');
+  match.push('贷款资金封闭运行，投向合规，流向可全程监控');
+  lines.push('1. 资金成本与匹配性：'+match.join('，')+'。');
 
-  const dL = Math.round((r - lpr)*100);
-  const dF = Math.round((r - ftp)*100);
+  // 收益测算与EVA
+  const evaTxt = isFinite(eva) ? `经营中台测算 EVA 为 ${eva.toFixed(2)}，` : '经营中台测算 EVA 为正（数值见附件/系统），';
+  const spread = (isFinite(rate)&&isFinite(ftp)) ? `利差可覆盖资金成本、风险成本与运营费用，` : '';
+  lines.push(`2. 收益测算与 EVA：${evaTxt}${spread}整体利润空间为正。`);
 
-  /* 二、贷款利率要素（参数化） */
-  const factor =
-    `执行利率 ${n2(r)}%，较一年期LPR（${n2(lpr)}%）${bpWord(dL)}，`+
-    `${dF===0?'与FTP持平':'高于FTP（'+n2(ftp)+'%）'+(dF>0?('+'+dF+'BP'):(dF+'BP'))}，`+
-    `处于${appr}范围内。`;
+  // 综合贡献
+  const contrib = [
+    '预计带动结算业务量与中间业务收入提升',
+    '引导客户集中结算并提升归行资金比例',
+    '推进代发工资、POS收单、跨境结算等综合金融服务'
+  ];
+  lines.push('3. 综合贡献与配套业务：'+contrib.join('；')+'。');
 
-  /* 三、客户资质说明（组合） */
-  const qual = []
-  if(tags.includes('民营控股')) qual.push('民营控股企业，治理结构清晰，实际控制人信用记录良好。');
-  if(tags.includes('国有/地方国企控股')) qual.push('国有/地方国企控股，具备较强公信力与抗风险能力。');
-  if(tags.includes('台资企业')) qual.push('台资企业，纳入我行台商重点客户库，合作稳定。');
-  if(tags.includes('外资独资或合资')) qual.push('外资独资或合资，股东实力雄厚，资金来源清晰可追溯。');
-  if(tags.includes('高新技术企业')) qual.push('已取得高新技术企业等资质，研发投入与主营匹配。');
-  if(tags.includes('专精特新“小巨人”')) qual.push('获“专精特新小巨人”等资质，细分领域具备专业优势。');
-  if(tags.includes('绿色目录符合')) qual.push('符合《绿色产业指导目录》，项目具备节能环保特征。');
-  if(segs.includes('普惠小微')) qual.push('纳入普惠小微口径管理，资料披露与尽调程序完备。');
-  if(segs.includes('科技')) qual.push('符合科技型企业属性，成长性良好。');
-  if(segs.includes('绿色')) qual.push('符合绿色金融口径，资金用途环保合规。');
-  if(segs.includes('上市公司')) qual.push('上市主体信息披露充分，信用状况良好。');
-  if(segs.includes('台商')) qual.push('台商客群属性明确，经营合规稳健。');
-  if(segs.includes('一般客群')) qual.push('为一般客群，主体资信稳定，经营真实有效。');
-  if(ops.length) qual.push(...ops);
-  qual.push('授信用途明确，资金闭环可控。');
-  const qualText = qual.join('\n');
+  // 风险与合规
+  lines.push('4. 风险与合规：客户为非关联方；不涉及自律加点豁免；资料真实、流程合规，贷后监测与限额管理同步落实。');
 
-  /* 四、申请事项（结构化） */
-  const stockLine = hasStock && $('#rateStock').value
-    ? `存量贷款执行利率 ${n2(rStock)}%，本次申请调整为 ${n2(r)}%。`
-    : '无存量贷款。';
-  const items =
-    `本次拟新增授信额度 ${amt||'—'} 万元，期限 ${tenor}，授信品种为【${prod}】，拟执行利率 ${n2(r)}%。\n`+
-    `${stockLine}\n`+
-    `配套担保方式：【${grts.length?grts.join('、'):'—'}】。`;
+  if(extra) lines.push('5. 其他补充：'+extra);
 
-  /* 五、申请理由（3 维度） */
-  const reason = [
-    '1）资金成本与匹配性：可匹配绿色债/科技债等低成本资金来源；资金投向符合政策与我行信贷投向，资金封闭运行、流向可监控。',
-    '2）收益测算与EVA：经营中台测算EVA为正/可接受（详见附件），利差可覆盖资金成本、风险成本与运营费用，利润空间为正。',
-    '3）综合贡献与配套业务：投放后预计日均存款与结算量提升，并带动代发、POS、票据/跨境等中间业务收入；同步推进集中结算与资金归行，提升综合贡献。'
-  ].join('\n');
+  return ['五、申请理由'].concat(lines).join('\n');
+}
+function buildApplyItems(){
+  const amt = $('#amt').value.trim() || '—';
+  const tenor = $('#tenor').value.trim() || '—';
+  const rate = $('#rate').value.trim() || '—';
+  const stock = $('#stockRate').value.trim();
+  const prod = getSelText('prodChips')[0]||'普惠小微贷款';
 
-  /* 六、其他事项 */
-  const other = '已完成关联方核查，未发现关联交易风险（如需可附截图）；本次申请不涉及“自律加点豁免”。' + (notes?('\n补充：'+notes):'');
-
-  /* 预览（标题不含“摘要”） */
-  const title = `${org}${dept}关于${name}贷款利率优惠的申请`;
-  const preview = [
-    title,
-    '',
-    '二、贷款利率要素',
-    factor,
-    '',
-    '三、客户资质说明',
-    qualText,
-    '',
-    '四、申请事项',
-    items,
-    '',
-    '五、申请理由',
-    reason,
-    '',
-    '六、其他事项说明',
-    other
-  ].join('\n');
-
-  /* 映射给 Word 占位 */
-  const map = {
-    '分行': org,
-    '部门': dept,
-    '企业名称': name,
-    '审批权限': appr,
-    '贷款利率要素': factor,
-    '客户资质说明': qualText,
-    '申请事项': items,
-    '申请理由': reason,
-    'EVA摘要': '见附件截图：经营中台测算EVA为正/可接受，关键指标以系统测算结果为准。',
-  };
-  return {title, preview, map};
+  const base = [
+    `- 本次拟新增授信额度 ${amt} 万元，期限 ${tenor}，授信品种为【${prod}】，拟执行利率 ${rate?rate+'%':'—'}。`
+  ];
+  if(stock){
+    base.push(`- 存量贷款执行利率 ${stock}%（如适用），本次申请调整为 ${rate?rate+'%':'—'}，调整后仍保持合理利差。`);
+  }
+  base.push('- 拟采取的风险缓释措施完备，担保/抵质押安排合规可执行。');
+  return ['四、申请事项'].concat(base).join('\n');
+}
+function buildEvaSec(){
+  const eva = $('#eva').value.trim();
+  return ['六、EVA 摘要', (eva?`- EVA 数值：${eva}`:'- EVA 数值：未提供（如有请补充或以OCR识别）')].join('\n');
+}
+function buildHeader(){
+  const title = buildTitle($('#branch').value,$('#dept').value,$('#company').value);
+  const factors = buildFactorSection();
+  const qual = buildQualification();
+  const items = buildApplyItems();
+  const reasons = buildApplyReasons();
+  const eva = buildEvaSec();
+  return `${title}\n\n一、申请要素\n（本段已结构化生成，详见下文“二、贷款利率要素”）\n\n${factors}\n\n${qual}\n\n${items}\n\n${reasons}\n\n${eva}\n\n七、其他事项\n- 已完成关联关系核查，未发现关联交易风险（如需可附截图）。\n- 本次申请不涉及自律加点豁免；如后续涉及，将按要求补充报备材料并报相关条线审核。`;
+}
+function buildPreview(){
+  $('#preview').value = buildHeader();
+  $('#status').textContent='已更新';
 }
 
-/* 预览刷新 */
-function refreshPreview(){ const t=buildTexts(); $('#previewText').textContent=t.preview; }
-$('#btnRefresh').onclick = refreshPreview;
-['org','dept','company','amt','tenor','prod','rateExec','lpr','ftp','appr','apprCustom','rateStock','notes'].forEach(id=>{
-  const el=document.getElementById(id); if(el) el.addEventListener('input', refreshPreview);
+/*—— 事件绑定：任一输入变化即重算 ——*/
+['branch','dept','company','amt','tenor','rate','stockRate','lpr','ftp','eva','extra'].forEach(id=>{
+  const el=$('#'+id); if(el){ el.addEventListener('input', buildPreview); }
 });
-refreshPreview();
+buildPreview();
 
-/* ====== Word 生成（PizZip 直接改 XML） ====== */
-function loadScript(url){
-  return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=url; s.onload=res; s.onerror=()=>rej(new Error('加载失败:'+url)); document.head.appendChild(s); });
-}
-async function ensureZip(){
-  if(window.PizZip) return;
-  const urls=['./pizzip.min.js','/pizzip.min.js','https://unpkg.com/pizzip@3.1.7/dist/pizzip.min.js'];
-  for(const u of urls){ try{ await loadScript(u); if(window.PizZip) return; }catch(_){} }
-  throw new Error('未找到 pizzip.min.js（请与本页同目录或联网一次）');
-}
-function escapeXml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function replacePlaceholders(xml, map){
-  for(const k in map){
-    const v=escapeXml(map[k]??''); const p1='{{'+k+'}}'; const p2='{{ '+k+' }}';
-    xml=xml.split(p1).join(v); xml=xml.split(p2).join(v);
-  }
-  // 图片占位兼容
-  ['EVA截图','截图','图片'].forEach(k=>{ const p='{{'+k+'}}'; xml = xml.split(p).join('[[PHOTO]]'); });
-  return xml;
-}
-function nextMedia(zip){
-  const files=Object.keys(zip.files).filter(k=>k.startsWith('word/media/'));
-  const nums=files.map(f=>{const m=f.match(/image(\d+)\./);return m?parseInt(m[1],10):0});
-  const n=nums.length?Math.max(...nums)+1:1; return `word/media/image${n}.jpeg`;
-}
-function nextRid(rels){
-  const ids=[...rels.matchAll(/Id="rId(\d+)"/g)].map(m=>parseInt(m[1],10));
-  const max=ids.length?Math.max(...ids):800; return 'rId'+(max+1);
-}
-function px2emu(px){return Math.round(px*9525)}
-async function buildPhotoGrid(){
-  if(!evaFiles.length) return null;
-  const c=2, cellW=480, cellH=360, gap=12;
-  const rows=Math.ceil(evaFiles.length/c);
-  const W=c*cellW+(c-1)*gap, H=rows*cellH+(rows-1)*gap;
-  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
-  const ctx=cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
-  let i=0;
-  for(let r=0;r<rows;r++){
-    for(let cc=0;cc<c;cc++){
-      if(i>=evaFiles.length) break;
-      const f=evaFiles[i++]; const url=URL.createObjectURL(f);
-      const img=new Image(); img.src=url; await img.decode().catch(()=>{});
-      const sc=Math.min(cellW/img.naturalWidth, cellH/img.naturalHeight);
-      const w=img.naturalWidth*sc, h=img.naturalHeight*sc;
-      const x=cc*(cellW+gap)+(cellW-w)/2, y=r*(cellH+gap)+(cellH-h)/2;
-      ctx.drawImage(img,x,y,w,h); URL.revokeObjectURL(url);
-    }
-  }
-  return {base64:cv.toDataURL('image/jpeg',0.92).split(',')[1], W, H};
-}
-function injectPhotoXML(zip,base64,wPx,hPx){
-  const media=nextMedia(zip); zip.file(media,base64,{base64:true});
-  const relPath='word/_rels/document.xml.rels'; let rels=zip.file(relPath).asText(); const rid=nextRid(rels);
-  rels=rels.replace('</Relationships>',`\n  <Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="${media.replace('word/','')}"/>\n</Relationships>`);
-  zip.file(relPath, rels);
-  const docPath='word/document.xml'; let xml=zip.file(docPath).asText();
-  const w=px2emu(wPx), h=px2emu(hPx);
-  const DRAW = `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" xmlns:wp="http://schemas.openxmlformats.org/officeDocument/2006/wordprocessingDrawing"><wp:extent cx="${w}" cy="${h}"/><wp:docPr id="1" name="EVA"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name="eva"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rid}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${w}" cy="${h}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
-  const rePh=/<w:t[^>]*>\[\[PHOTO\]\]<\/w:t>/;
-  if(rePh.test(xml)) xml = xml.replace(rePh, DRAW);
-  else xml = xml.replace(/<\/w:body>\s*<\/w:document>/, `<w:p>${DRAW}</w:p></w:body></w:document>`);
-  zip.file(docPath, xml);
-}
-
-/* 生成 DOCX */
-$('#btnGen').onclick = async ()=>{
+/*—— 复制 ——*/
+$('#btnCopy').onclick = async ()=>{
+  const txt=$('#preview').value;
   try{
-    $('#log').textContent='生成中…';
-    await ensureZip();
-    const tpl = prompt('请选择模板方式：\n1=从本地选择（推荐）\n2=我已缓存（暂不做）\n\n直接点“确定”选择本地。') === null ? null : null;
-    // 仅支持本地选择（更稳定）
-    const input = document.createElement('input'); input.type='file'; input.accept='.docx';
-    input.onchange = async () => {
-      const f = input.files[0]; if(!f){ $('#log').textContent='已取消'; return; }
-      const ab = await f.arrayBuffer(); const zip=new PizZip(ab);
-      const {title,map} = (function(){ const t=buildTexts(); return {title:t.title, map:t.map}; })();
-      const xmlPath='word/document.xml'; let xml=zip.file(xmlPath).asText();
-      xml = replacePlaceholders(xml, map);
-      const grid = await buildPhotoGrid(); if(grid){ injectPhotoXML(zip, grid.base64, grid.W, grid.H); }
-      const out=zip.generate({type:'blob'});
-      const ds=new Date().toISOString().slice(0,10).replace(/-/g,'');
-      const a=document.createElement('a'); a.href=URL.createObjectURL(out); a.download=`${title}_${ds}.docx`;
-      document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1200);
-      $('#log').textContent='✅ 已生成';
-    };
-    input.click();
-  }catch(e){ console.error(e); alert('生成失败：'+(e&&e.message?e.message:e)); $('#log').textContent='❌ 失败'; }
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(txt);
+    }else{
+      const ta=$('#preview'); ta.select(); document.execCommand('copy');
+    }
+    $('#copyHint').textContent='✅ 已复制到剪贴板';
+  }catch(e){
+    $('#copyHint').textContent='❌ 复制失败，可长按全选再复制';
+  }
+};
+// 移动端长按全选
+(function enableLongPress(){
+  const ta=$('#preview'); if(!ta) return;
+  let t; ta.addEventListener('touchstart',()=>{ t=setTimeout(()=>{ ta.select(); },500); });
+  ta.addEventListener('touchend',()=>clearTimeout(t));
+})();
+
+/*—— 重置 ——*/
+$('#btnReset').onclick = ()=>{
+  ['company','amt','tenor','rate','stockRate','eva','extra'].forEach(id=>$('#'+id).value='');
+  $('#lpr').value='3.00'; $('#ftp').value='1.80';
+  // 恢复默认 chips
+  $$('#permChips .chip').forEach(x=>x.classList.remove('sel')); $$('#permChips .chip')[0].classList.add('sel');
+  $$('#prodChips .chip').forEach(x=>x.classList.remove('sel')); $$('#prodChips .chip')[0].classList.add('sel');
+  $$('#segChips .chip').forEach(x=>x.classList.remove('sel')); ['普惠小微'].forEach(v=>{ const n=$$('#segChips .chip').find(x=>x.dataset.v===v); if(n) n.classList.add('sel'); });
+  buildPreview();
 };
 
-/* 简单自测（防低级回归） */
-function assert(n,c){ if(!c) console.error('❌ '+n); else console.log('✅ '+n); }
+/*—— OCR：Tesseract.js（在线加载，失败不影响） ——*/
+let ocrReady=false, ocrLoading=false;
+async function ensureOCR(){
+  if(ocrReady||ocrLoading) return ocrReady;
+  ocrLoading=true;
+  try{
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script'); s.src='https://unpkg.com/tesseract.js@5.1.0/dist/tesseract.min.js';
+      s.onload=()=>res(); s.onerror=()=>rej(new Error('load fail')); document.head.appendChild(s);
+    });
+    ocrReady=true; $('#ocrLog').textContent='OCR 已加载';
+  }catch(_){ $('#ocrLog').textContent='OCR 加载失败（可手填）'; }
+  ocrLoading=false; return ocrReady;
+}
+function extractEvaFrom(text){
+  // 优先匹配“EVA 1.23 / EVA：0.86% / EVA=-0.12”
+  const m1 = text.match(/E\s*V\s*A[^0-9\-]*([-+]?\d+(?:\.\d+)?)(\s*%?)/i);
+  if(m1) return parseFloat(m1[1]);
+  // 退而求其次：找类似“EVA值为 1.23”周边数字
+  const m2 = text.match(/值为\s*([-+]?\d+(?:\.\d+)?)/i);
+  if(m2) return parseFloat(m2[1]);
+  // 再不行：拿全文中出现次数最多的 0.x 或 x.xx（有风险，仅兜底）
+  const nums = (text.match(/[-+]?\d+(?:\.\d+)?/g)||[]).map(Number).filter(n=>isFinite(n));
+  if(nums.length) {
+    // 取接近 0~5 区间的数作为可能的 EVA
+    const cand = nums.filter(n=>Math.abs(n)<=10);
+    if(cand.length) return cand[0];
+  }
+  return NaN;
+}
+$('#btnOcr').onclick = async ()=>{
+  const files = $('#evaImg').files;
+  if(!files || !files.length){ $('#ocrLog').textContent='未选择截图'; return; }
+  const ok = await ensureOCR(); if(!ok){ alert('OCR 加载失败，可手动填写 EVA 数值'); return; }
+  $('#ocrLog').textContent='识别中…';
+  try{
+    let merged=''; let firstEva;
+    for(const f of files){
+      const url=URL.createObjectURL(f);
+      const r=await Tesseract.recognize(url,'chi_sim+eng'); URL.revokeObjectURL(url);
+      const txt=(r&&r.data&&r.data.text)||''; merged+=('\n'+txt);
+      if(firstEva==null){
+        const v=extractEvaFrom(txt);
+        if(isFinite(v)) firstEva=v;
+      }
+    }
+    if(isFinite(firstEva)){ $('#eva').value=String(firstEva); $('#ocrLog').textContent='已识别 EVA='+firstEva.toFixed(2); }
+    else { $('#ocrLog').textContent='未识别到 EVA（可手填）'; }
+    buildPreview();
+  }catch(e){
+    console.error(e); $('#ocrLog').textContent='识别失败（可手填）';
+  }
+};
+
+/*—— 自检（简单用例） ——*/
 (function tests(){
-  assert('bpWord +40', bpWord(40)==='上浮40BP');
-  assert('bpWord -25', bpWord(-25)==='下浮25BP');
+  const t1 = bpDiff(2.60,3.00).includes('下浮 40BP');
+  const t2 = ftpPhrase(2.60,1.80).includes('高于 FTP') && ftpPhrase(1.60,1.80).includes('低于 FTP');
+  console.log('✅ 测试 bpDiff=',t1,' ftpPhrase=',t2);
 })();
 </script>
-
-<!--
-Word 模板占位（请在模板中写这些花括号）：
-{{分行}}  {{部门}}  {{企业名称}}  {{审批权限}}
-{{贷款利率要素}}  {{客户资质说明}}  {{申请事项}}  {{申请理由}}  {{EVA摘要}}  {{EVA截图}}
-
-建议模板结构示例（你可直接在 Word 里排版）：
-标题：{{分行}}{{部门}}关于{{企业名称}}贷款利率优惠的申请
-二、贷款利率要素
-{{贷款利率要素}}
-
-三、客户资质说明
-{{客户资质说明}}
-
-四、申请事项
-{{申请事项}}
-
-五、申请理由
-{{申请理由}}
-
-六、EVA 摘要
-{{EVA摘要}}
-
-附件：EVA 截图汇总
-{{EVA截图}}
--->
 </body>
 </html>
