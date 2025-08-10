@@ -1,0 +1,12 @@
+{
+  "name": "尽调生成器",
+  "short_name": "尽调生成",
+  "start_url": "/openandclose/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0a84ff",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
