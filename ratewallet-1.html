@@ -196,7 +196,7 @@ textarea{min-height:80px}
     <button class="btn" id="btnCopySummary">复制摘要</button>
     <button class="btn sky" id="btnOcr">识别EVA</button>
     <button class="btn ghost" id="btnDocx">生成 Word（含图片）</button>
-    <button class="btn ghost" id="btnCheer">我爱作者</button>
+    <button class="btn ghost" id="btnCheer">我爱XD.Hu</button>
     <span class="log" id="log">就绪</span>
   </div>
 </div>
@@ -204,10 +204,10 @@ textarea{min-height:80px}
 <div id="cheerModal" class="modal">
   <div class="panel" style="position:relative">
     <span class="close" id="cheerClose" title="关闭">✖</span>
-    <h3 style="margin:0 0 8px 0">我爱作者</h3>
-    <p class="small">内容记得核对哦，我希望你我都可以更快、更准、更合规地完成日常工作。</p>
-    <p class="small">狠狠给我夸！欢迎联系作者：<b>coolkiy@gmail.com</b></p>
-    <p class="small">感谢支持，别建议！么么哒～</p>
+    <h3 style="margin:0 0 8px 0">我爱XD.Hu</h3>
+    <p class="small">你就说棒不棒～！内容记得核对哦，我希望你我都可以更快、更准、更合规地完成日常工作。</p>
+    <p class="small">狠狠给我夸！欢迎联系：<b>coolkiy@gmail.com</b></p>
+    <p class="small">感谢支持，感谢夸奖，别给建议～改不过来～我会优化～持续优化～么么哒～</p>
   </div>
 </div>
 
@@ -355,7 +355,7 @@ async function copyTarget(sel) {
         document.execCommand('copy');
         ta.remove();
     }
-    toast('✔︎ 作者牛逼 · 已复制');
+    toast('✔︎ 牛逼牛逼 · 已复制');
     rocket();
     stars(28);
 }
@@ -733,7 +733,7 @@ async function buildWord() {
         const blob = await Packer.toBlob(doc);
         const ds = new Date().toISOString().slice(0, 10).replace(/-/g, '');
         downloadBlob(`利率优惠签报_${ds}.docx`, blob);
-        toast('✔︎ 作者牛逼 · 已生成 Word');
+        toast('✔︎ 美丽美丽 · 已生成 Word');
         stars(18);
     } catch (e) {
         console.error('Word generation error:', e);
