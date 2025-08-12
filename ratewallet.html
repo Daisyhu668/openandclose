@@ -76,8 +76,8 @@ textarea{min-height:80px}
 .brick{height:10px;background:repeating-linear-gradient(90deg,#f59e0b 0 12px,#d97706 12px 24px);opacity:.2;border-radius:10px;margin:6px 0}
 
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:80}
-.modal .panel{background:#fff;border-radius:16px;max-width:460px;width:calc(100% - 40px);padding:18px;box-shadow:var(--shadow)}
-.modal .panel .close{position:absolute;right:12px;top:10px;cursor:pointer;color:#64748b}
+.modal .panel{background:#fff;border-radius:16px;max-width:460px;width:calc(100% - 40px);padding:18px;box-shadow:var(--shadow);position:relative}
+.modal .panel .close{position:absolute;right:12px;top:10px;cursor:pointer;color:#64748b;font-size:18px;font-weight:bold;z-index:1}
 .modal.show{display:flex}
 
 @media (max-width:860px){
@@ -201,13 +201,13 @@ textarea{min-height:80px}
   </div>
 </div>
 
-<div id="cheerModal" class="modal" style="display:none">
+<div id="cheerModal" class="modal">
   <div class="panel" style="position:relative">
     <span class="close" id="cheerClose" title="关闭">✖</span>
     <h3 style="margin:0 0 8px 0">我爱作者</h3>
-    <p class="small">这款签报生成器由作者业余时间打造，目标是：更快、更准、更合规地完成日常 OA。</p>
-    <p class="small">如果觉得好用，欢迎联系作者：<b>coolkiy@gmail.com</b></p>
-    <p class="small">感谢支持与建议！</p>
+    <p class="small">内容记得核对哦，我希望你我都可以更快、更准、更合规地完成日常工作。</p>
+    <p class="small">狠狠给我夸！欢迎联系作者：<b>coolkiy@gmail.com</b></p>
+    <p class="small">感谢支持，别建议！么么哒～</p>
   </div>
 </div>
 
@@ -410,7 +410,7 @@ function generateSummary(data) {
         bpFtp: (data.dF >= 0 ? '+' : '') + data.dF,
         thrRef: (typeof data.thrRef === 'number' ? data.thrRef.toFixed(2) : '')
     };
-    return '- ' + _tpl.map(line => line.replace(/\{(\\w+)\\/g, (_, k) => (map[k] ?? ''))).filter(Boolean).join('\n- ');
+    return '- ' + _tpl.map(line => line.replace(/\{(\w+)\}/g, (_, k) => (map[k] ?? ''))).filter(Boolean).join('\n- ');
 }
 
 function generateBodyParts(data) {
@@ -617,7 +617,32 @@ async function ocrClick() { const fs = $('#ocrImg').files; if (!fs || !fs.length
 async function runOCR(files) { let best = null; for (const f of files) { const url = URL.createObjectURL(f); try { const r = await Tesseract.recognize(url, 'chi_sim+eng'); const text = (r.data.text || '').replace(/\s+/g, ' '); const patterns = [/EVA（整笔业务）[^0-9\-]*([+\-]?\d+(?:\.\d+)?)/i, /EVA[^0-9\-]*([+\-]?\d+(?:\.\d+)?)/i, /ＥＶＡ[^0-9\-]*([+\-]?\d+(?:\.\d+)?)/i]; for (const re of patterns) { const m = text.match(re); if (m) { const val = parseFloat(m[1]); if (!isNaN(val)) { best = val; break; } } } } finally { URL.revokeObjectURL(url); } } return best; }
 
 let docxLoaded = false;
-async function ensureDocx() { if (docxLoaded) return; const candidates = ['./docx.min.js', 'https://unpkg.com/docx@8.5.0/build/index.js']; for (const c of candidates) { try { await new Promise((res, rej) => { const s = document.createElement('script'); s.src = c; s.onload = () => { docxLoaded = true; res(); }; s.onerror = rej; document.head.appendChild(s); }); if (window.docx) return; } catch (_) { } } throw new Error('未能加载 docx 库'); }
+async function ensureDocx() { 
+    if (docxLoaded) return; 
+    const candidates = [
+        'https://unpkg.com/docx@8.5.0/build/index.js',
+        'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js',
+        './docx.min.js'
+    ]; 
+    for (const c of candidates) { 
+        try { 
+            await new Promise((res, rej) => { 
+                const s = document.createElement('script'); 
+                s.src = c; 
+                s.onload = () => { 
+                    docxLoaded = true; 
+                    res(); 
+                }; 
+                s.onerror = rej; 
+                document.head.appendChild(s); 
+            }); 
+            if (window.docx) return; 
+        } catch (_) { 
+            console.warn(`Failed to load docx from ${c}`);
+        } 
+    } 
+    throw new Error('未能加载 docx 库'); 
+}
 
 async function buildWord() {
     const txt = $('#out').textContent || '';
@@ -626,11 +651,33 @@ async function buildWord() {
     rocket();
     try {
         await ensureDocx();
+        
+        // 检查docx库是否正确加载
+        if (!window.docx || !window.docx.Document) {
+            throw new Error('docx库未正确加载');
+        }
+        
         const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, ImageRun, PageBreak } = window.docx;
 
-        const p = (text) => new Paragraph({ children: [new TextRun({ text, font: '仿宋_GB2312', size: 24 })], spacing: { after: 160 } });
-        const h1 = (text) => new Paragraph({ text, heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER, spacing: { after: 240 } });
-        const h2 = (text) => new Paragraph({ text, heading: HeadingLevel.HEADING_2, spacing: { after: 120 } });
+        const p = (text) => new Paragraph({ 
+            children: [new TextRun({ 
+                text: text || '', 
+                font: '仿宋_GB2312', 
+                size: 24 
+            })], 
+            spacing: { after: 160 } 
+        });
+        const h1 = (text) => new Paragraph({ 
+            text: text || '', 
+            heading: HeadingLevel.HEADING_1, 
+            alignment: AlignmentType.CENTER, 
+            spacing: { after: 240 } 
+        });
+        const h2 = (text) => new Paragraph({ 
+            text: text || '', 
+            heading: HeadingLevel.HEADING_2, 
+            spacing: { after: 120 } 
+        });
 
         const summary = $('#summaryOut').textContent || '';
         const titleLine = (txt.split('\n')[0] || '').trim();
@@ -640,16 +687,20 @@ async function buildWord() {
         if (titleLine) docChildren.push(h1(titleLine));
         
         docChildren.push(h2('OA 摘要'));
-        summary.split(/\n/).forEach(line => docChildren.push(p(line)));
+        summary.split(/\n/).forEach(line => {
+            if (line.trim()) docChildren.push(p(line));
+        });
         
         docChildren.push(new Paragraph({ children: [new PageBreak()] }));
         
         docChildren.push(h2('正文'));
         bodyText.split(/\n/).forEach(line => {
-            if (/^[一二三四五六七八九十]+、/.test(line.trim())) {
-                docChildren.push(h2(line));
-            } else {
-                docChildren.push(p(line));
+            if (line.trim()) {
+                if (/^[一二三四五六七八九十]+、/.test(line.trim())) {
+                    docChildren.push(h2(line));
+                } else {
+                    docChildren.push(p(line));
+                }
             }
         });
 
@@ -658,13 +709,23 @@ async function buildWord() {
             docChildren.push(h2('附件：EVA截图'));
             for (let i = 0; i < imgs.length; i++) {
                 const file = imgs[i];
-                const buffer = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = e => resolve(e.target.result);
-                    reader.onerror = e => reject(e.target.error);
-                    reader.readAsArrayBuffer(file);
-                });
-                docChildren.push(p(`截图 ${i + 1}`), new Paragraph({ children: [new ImageRun({ data: buffer, transformation: { width: 540, height: 405 } })] }));
+                try {
+                    const buffer = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = e => resolve(e.target.result);
+                        reader.onerror = e => reject(e.target.error);
+                        reader.readAsArrayBuffer(file);
+                    });
+                    docChildren.push(p(`截图 ${i + 1}`), new Paragraph({ 
+                        children: [new ImageRun({ 
+                            data: buffer, 
+                            transformation: { width: 540, height: 405 } 
+                        })] 
+                    }));
+                } catch (imgError) {
+                    console.warn(`Failed to process image ${i + 1}:`, imgError);
+                    docChildren.push(p(`截图 ${i + 1} (处理失败)`));
+                }
             }
         }
 
@@ -675,8 +736,8 @@ async function buildWord() {
         toast('✔︎ 作者牛逼 · 已生成 Word');
         stars(18);
     } catch (e) {
-        console.error(e);
-        toast('生成Word失败，请检查控制台日志');
+        console.error('Word generation error:', e);
+        toast(`生成Word失败: ${e.message}`);
     }
 }
 
