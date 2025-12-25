@@ -112,6 +112,7 @@
   </div>
 
 
+  
   <script>
   'use strict';
   const statusEl = document.getElementById('status');
@@ -123,7 +124,7 @@
       'https://cdn.jsdelivr.net/npm/pizzip@3.1.7/dist/pizzip.js',
       'https://unpkg.com/pizzip@3.1.7/dist/pizzip.js'
     ];
-    for(const url of sources){
+    for (const url of sources){
       try{
         await new Promise((resolve,reject)=>{
           const s=document.createElement('script');
@@ -134,7 +135,7 @@
         });
         if(window.PizZip){ return; }
       }catch(err){
-        console.warn('加载 PizZip 失败，尝试下一个源', err);
+        console.warn('加载 PizZip 失败，尝试下一源', err);
       }
     }
     throw new Error('PizZip 加载失败，请联网后刷新页面。');
@@ -203,13 +204,13 @@
     const parser = new DOMParser();
     const dom = parser.parseFromString(xml,'application/xml');
     if(dom.getElementsByTagName('parsererror').length){
-      throw new Error('模板内容解析失败，请确认 DOCX 未损坏。');
+      throw new Error('模板解析失败，请确认 DOCX 正常。');
     }
     const stats = {};
-    const regexMap = {};
+    const regMap = {};
     Object.keys(map).forEach((key)=>{
       stats[key]=0;
-      regexMap[key]=new RegExp('{{\s*'+key+'\s*}}','g');
+      regMap[key]=new RegExp('{{\s*'+key+'\s*}}','g');
     });
     const paragraphs = Array.from(dom.getElementsByTagNameNS(W_NS,'p'));
     paragraphs.forEach((p)=>{
@@ -219,7 +220,7 @@
       let updated = original;
       let changed = false;
       Object.keys(map).forEach((key)=>{
-        const regex = regexMap[key];
+        const regex = regMap[key];
         const matches = updated.match(regex);
         if(matches){
           stats[key]+=matches.length;
@@ -281,18 +282,65 @@
       +`</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
   }
 
-  function injectPhotoPages(zip, pages){
-    if(!pages.length) return;
+  function readImageFile(file){
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=()=>{
+        const img=new Image();
+        img.onload=()=>resolve(img);
+        img.onerror=()=>reject(new Error('无法读取图片：'+file.name));
+        img.src=reader.result;
+      };
+      reader.onerror=()=>reject(new Error('图片加载失败：'+file.name));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function convertFileToBase64(file){
+    const img = await readImageFile(file);
+    const maxEdge = 2000;
+    const largest = Math.max(img.width, img.height);
+    const scale = largest>maxEdge ? maxEdge/largest : 1;
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(img.width * scale));
+    canvas.height = Math.max(1, Math.round(img.height * scale));
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle='#fff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    const base64 = canvas.toDataURL('image/jpeg',0.92).split(',')[1];
+    return { base64, ratio: canvas.height / canvas.width };
+  }
+
+  async function preparePhotoRuns(files){
+    const runs=[];
+    for(const file of files){
+      try{
+        const { base64, ratio } = await convertFileToBase64(file);
+        const widthIn = 6;
+        const heightIn = Math.min(7.2, widthIn * ratio);
+        runs.push({ base64, widthIn, heightIn, name: file.name });
+      }catch(err){
+        console.error('处理照片失败', file.name, err);
+        alert('处理照片失败：'+file.name+'，已跳过。');
+      }
+    }
+    return runs;
+  }
+
+  function injectPhotoRuns(zip, runs){
+    if(!runs.length) return;
     const relPath='word/_rels/document.xml.rels';
     let rels = zip.file(relPath).asText();
     let docXml = zip.file('word/document.xml').asText();
     let block='';
     let docPr=300;
-    pages.forEach((page, idx)=>{
-      const result = addImageRelationship(zip, rels, page.base64);
+    runs.forEach((run, idx)=>{
+      const result = addImageRelationship(zip, rels, run.base64);
       rels = result.rels;
-      block += buildDrawingXml(result.rid, page.widthIn, page.heightIn, docPr++);
-      if(idx < pages.length-1){
+      block += buildDrawingXml(result.rid, run.widthIn, run.heightIn, docPr++);
+      block += '<w:p/>';
+      if((idx % 2 === 1) && idx < runs.length-1){
         block += '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
       }
     });
@@ -304,58 +352,6 @@
       docXml = docXml.replace(/<\/w:body>\s*<\/w:document>/, block+'</w:body></w:document>');
     }
     zip.file('word/document.xml', docXml);
-  }
-
-  function readImageFile(file){
-    return new Promise((resolve,reject)=>{
-      const reader=new FileReader();
-      reader.onload=()=>{
-        const img=new Image();
-        img.onload=()=>resolve(img);
-        img.onerror=()=>reject(new Error('无法读取图片：'+file.name));
-        img.src=reader.result;
-      };
-      reader.onerror=()=>reject(new Error('图片读取失败：'+file.name));
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async function buildPhotoPages(files){
-    if(!files.length) return [];
-    const perPage = 2;
-    const cellW = 1500;
-    const cellH = 1100;
-    const margin = 80;
-    const gap = 80;
-    const width = cellW + margin*2;
-    const pages=[];
-    for(let i=0;i<files.length;i+=perPage){
-      const group = files.slice(i,i+perPage);
-      const canvas = document.createElement('canvas');
-      const height = margin*2 + group.length*cellH + Math.max(0, group.length-1)*gap;
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle='#f8f9fb';
-      ctx.fillRect(0,0,width,height);
-      for(let row=0; row<group.length; row++){
-        const img = await readImageFile(group[row]);
-        const top = margin + row*(cellH+gap);
-        ctx.fillStyle='#ffffff';
-        ctx.fillRect(margin, top, cellW, cellH);
-        const scale = Math.min(cellW/img.width, cellH/img.height);
-        const drawW = img.width*scale;
-        const drawH = img.height*scale;
-        const dx = margin + (cellW-drawW)/2;
-        const dy = top + (cellH-drawH)/2;
-        ctx.drawImage(img, dx, dy, drawW, drawH);
-      }
-      const base64 = canvas.toDataURL('image/jpeg',0.92).split(',')[1];
-      const widthIn = 6.5;
-      const heightIn = widthIn * (canvas.height/canvas.width);
-      pages.push({ base64, widthIn, heightIn });
-    }
-    return pages;
   }
 
   function downloadBlob(blob,name){
@@ -387,19 +383,19 @@
       const docPath = 'word/document.xml';
       let xml = zip.file(docPath).asText();
       const replacements = { '客户名称':customer, '行业分类':industry, '经营地址':address };
-      const result = replacePlaceholdersXML(xml, replacements);
-      const missing = PLACEHOLDERS.filter((key)=>result.stats[key]===0);
+      const replaced = replacePlaceholdersXML(xml, replacements);
+      const missing = PLACEHOLDERS.filter((key)=>replaced.stats[key]===0);
       if(missing.length){
-        throw new Error('模板缺少占位符：'+missing.join(','));
+        throw new Error('模板中缺少占位符：'+missing.join(','));
       }
-      setStatus('占位符命中：'+PLACEHOLDERS.map((k)=>k+result.stats[k]).join('，'));
-      xml = result.xml;
-      const needPhoto = selectedPhotos.length>0;
-      if(needPhoto){ xml = ensurePhotoBlock(xml); }
+      setStatus('占位符命中：'+PLACEHOLDERS.map((k)=>k+replaced.stats[k]).join('，'));
+      xml = replaced.xml;
+      const needPhotos = selectedPhotos.length>0;
+      if(needPhotos){ xml = ensurePhotoBlock(xml); }
       zip.file(docPath, xml);
-      if(needPhoto){
-        const pages = await buildPhotoPages(selectedPhotos);
-        injectPhotoPages(zip, pages);
+      if(needPhotos){
+        const runs = await preparePhotoRuns(selectedPhotos);
+        injectPhotoRuns(zip, runs);
       }
       const blob = zip.generate({ type:'blob' });
       const fileName = sanitizeFileName(customer)+'新开户尽职调查表.docx';
@@ -415,6 +411,7 @@
   const btn = document.getElementById('btnGen');
   if(btn){ btn.addEventListener('click', generate); }
   </script>
+
 
 </body>
 </html>
