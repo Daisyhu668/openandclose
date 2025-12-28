@@ -4,52 +4,131 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>新开户尽职调查表 · 智能生成器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet" />
   <style>
     :root{
-      --bg1:#fff5fe;
-      --bg2:#f3fbff;
-      --paper:rgba(255,255,255,.92);
-      --ink:#1b163b;
-      --muted:#7b7799;
-      --line:#efeaff;
-      --accent1:#ff88c3;
-      --accent2:#9c7dff;
-      --accent3:#66e8ff;
-      --radius:24px;
-      --shadow:0 18px 40px rgba(31,22,59,.12);
+      --bg1:#eef6ef;
+      --bg2:#e3efe8;
+      --paper:rgba(255,255,255,.94);
+      --ink:#1b2a22;
+      --muted:#5e6e63;
+      --line:#d7e5db;
+      --accent1:#1f4d3a;
+      --accent2:#3f7a5c;
+      --accent3:#8bb99a;
+      --radius:22px;
+      --shadow:0 22px 60px rgba(20,38,28,.16);
+      --font-body:'Noto Sans SC','Source Han Sans SC','PingFang SC','Hiragino Sans GB','Microsoft Yahei',sans-serif;
+      --font-display:'Noto Serif SC','Source Han Serif SC','STSong','Songti SC',serif;
     }
-    *{box-sizing:border-box;font-family:'SF Pro Display','PingFang SC',-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    *{box-sizing:border-box;font-family:var(--font-body)}
     body{
       margin:0;
       min-height:100vh;
-      background:radial-gradient(circle at 15% 20%,rgba(255,136,195,.25),transparent 50%),
-                 radial-gradient(circle at 80% 10%,rgba(153,125,255,.23),transparent 45%),
-                 linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 70%,#fcfdff 100%);
+      background:
+        radial-gradient(900px 500px at -10% 10%,rgba(63,122,92,.2),transparent 60%),
+        radial-gradient(700px 400px at 100% 0%,rgba(139,185,154,.22),transparent 55%),
+        linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 65%,#f6fbf7 100%);
       color:var(--ink);
-      padding-bottom:140px;
+      padding-bottom:calc(140px + env(safe-area-inset-bottom));
     }
-    .shell{max-width:960px;margin:0 auto;padding:32px clamp(16px,4vw,40px) 80px}
-    header.hero{display:flex;gap:18px;align-items:center;margin-bottom:26px;flex-wrap:wrap}
-    .logo{width:62px;height:62px;border-radius:24px;background:linear-gradient(140deg,#ff88c3,#ff7ab5 35%,#a183ff 70%,#66e8ff);box-shadow:0 16px 34px rgba(255,136,195,.4)}
-    h1{margin:0;font-size:clamp(22px,5vw,34px);font-weight:700;letter-spacing:.3px}
+    body::after{
+      content:'';
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(280px 180px at 80% 20%,rgba(139,185,154,.2),transparent 70%),
+        radial-gradient(240px 200px at 10% 70%,rgba(63,122,92,.16),transparent 70%);
+      mix-blend-mode:multiply;
+      opacity:.7;
+    }
+    .shell{
+      max-width:960px;
+      margin:0 auto;
+      padding:32px clamp(16px,4vw,40px) 80px;
+      padding-top:calc(32px + env(safe-area-inset-top));
+      padding-left:calc(clamp(16px,4vw,40px) + env(safe-area-inset-left));
+      padding-right:calc(clamp(16px,4vw,40px) + env(safe-area-inset-right));
+    }
+    header.hero{display:flex;gap:18px;align-items:center;margin-bottom:26px;flex-wrap:wrap;animation:rise .7s cubic-bezier(.16,1,.3,1) both}
+    .logo{width:66px;height:66px;border-radius:22px;background:conic-gradient(from 160deg,var(--accent1),#2f6a4d 35%,var(--accent3) 55%,var(--accent2) 78%,var(--accent1));box-shadow:0 18px 34px rgba(31,77,58,.28)}
+    h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,5vw,34px);font-weight:700;letter-spacing:.4px}
     .hero p{margin:8px 0 0;font-size:14px;color:var(--muted)}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
-    .card{background:var(--paper);border-radius:var(--radius);border:1px solid rgba(255,255,255,.8);box-shadow:var(--shadow);padding:24px;backdrop-filter:blur(10px)}
-    .card h2{margin:0 0 14px;font-size:18px;color:#2d2559;display:flex;align-items:center;gap:8px}
-    .card h2::after{content:'';flex:1;height:2px;background:linear-gradient(90deg,rgba(255,136,195,.35),transparent)}
-    label{display:block;font-size:14px;font-weight:600;color:#4c456d;margin-bottom:6px}
-    input[type=text],input[type=file]{width:100%;border:1px solid var(--line);border-radius:16px;padding:13px 15px;font-size:15px;color:var(--ink);background:#fff;outline:none;transition:border .2s,box-shadow .2s}
-    input[type=text]:focus,input[type=file]:focus{border-color:#b7a5ff;box-shadow:0 0 0 4px rgba(153,125,255,.22)}
+    .card{
+      background:linear-gradient(160deg,rgba(255,255,255,.7),rgba(255,255,255,.52));
+      border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,.55);
+      box-shadow:0 24px 60px rgba(21,42,32,.18), inset 0 1px 0 rgba(255,255,255,.5);
+      padding:24px;
+      backdrop-filter:saturate(160%) blur(18px);
+      -webkit-backdrop-filter:saturate(160%) blur(18px);
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--accent1),var(--accent3),var(--accent2));opacity:.65}
+    .card::after{
+      content:'';
+      position:absolute;
+      inset:-40% -10% auto -10%;
+      height:120%;
+      background:linear-gradient(120deg,rgba(255,255,255,.35),transparent 55%);
+      opacity:.35;
+      pointer-events:none;
+    }
+    .card h2{margin:0 0 14px;font-size:18px;color:#2b262f;display:flex;align-items:center;gap:8px}
+    .card h2::after{content:'';flex:1;height:2px;background:linear-gradient(90deg,rgba(63,122,92,.3),transparent)}
+    label{display:block;font-size:14px;font-weight:600;color:#4c4653;margin-bottom:6px}
+    input[type=text],input[type=file]{width:100%;border:1px solid var(--line);border-radius:14px;padding:13px 15px;font-size:15px;color:var(--ink);background:rgba(255,255,255,.95);outline:none;transition:border .2s,box-shadow .2s,transform .2s}
+    input[type=text]:focus,input[type=file]:focus{border-color:rgba(63,122,92,.6);box-shadow:0 0 0 4px rgba(63,122,92,.2);transform:translateY(-1px)}
     .field{margin-bottom:18px}
     .hint{font-size:13px;color:var(--muted);margin-top:6px}
     .photos{display:flex;flex-direction:column;gap:14px}
     .preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
-    .thumb{width:100%;aspect-ratio:4/3;border-radius:16px;border:1px dashed rgba(255,136,195,.55);object-fit:cover;box-shadow:inset 0 0 0 2px rgba(255,255,255,.7)}
-    .dock{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);backdrop-filter:saturate(170%) blur(14px);border-top:1px solid rgba(255,255,255,.7);box-shadow:0 -12px 30px rgba(31,22,59,.1)}
-    .dock-inner{max-width:960px;margin:0 auto;padding:16px clamp(16px,4vw,34px);display:flex;gap:14px;align-items:center}
-    .btn{flex:1;border:none;border-radius:20px;padding:16px 20px;font-size:16px;font-weight:600;color:#fff;background:linear-gradient(100deg,var(--accent1),var(--accent2),var(--accent3));box-shadow:0 16px 34px rgba(153,125,255,.35);cursor:pointer;transition:transform .15s,box-shadow .15s}
-    .btn:active{transform:translateY(1px);box-shadow:0 6px 15px rgba(153,125,255,.35)}
+    .thumb{width:100%;aspect-ratio:4/3;border-radius:14px;border:1px dashed rgba(63,122,92,.45);object-fit:cover;box-shadow:0 12px 26px rgba(23,40,30,.1)}
+    .dock{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(244,250,246,.7);
+      border-top:1px solid rgba(255,255,255,.65);
+      box-shadow:0 -16px 36px rgba(18,36,26,.16);
+      backdrop-filter:saturate(160%) blur(20px);
+      -webkit-backdrop-filter:saturate(160%) blur(20px);
+      padding-bottom:env(safe-area-inset-bottom);
+    }
+    .dock::before{
+      content:'';
+      position:absolute;
+      inset:0 0 auto 0;
+      height:1px;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);
+      opacity:.8;
+    }
+    .dock-inner{
+      max-width:960px;
+      margin:0 auto;
+      padding:16px clamp(16px,4vw,34px);
+      padding-bottom:calc(16px + env(safe-area-inset-bottom));
+      padding-left:calc(clamp(16px,4vw,34px) + env(safe-area-inset-left));
+      padding-right:calc(clamp(16px,4vw,34px) + env(safe-area-inset-right));
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .btn{flex:1;border:none;border-radius:18px;padding:16px 20px;font-size:16px;font-weight:600;color:#fff;background:linear-gradient(110deg,var(--accent1),#2f6a4d 40%,var(--accent3) 70%,var(--accent2));box-shadow:0 18px 36px rgba(31,77,58,.25);cursor:pointer;transition:transform .18s,box-shadow .18s,filter .18s}
+    .btn:hover{filter:brightness(1.02)}
+    .btn:active{transform:translateY(1px);box-shadow:0 8px 20px rgba(31,77,58,.25)}
     .status{font-size:13px;color:var(--muted)}
+    .reveal{animation:rise .7s cubic-bezier(.16,1,.3,1) both;animation-delay:var(--d,0ms)}
+    @keyframes rise{
+      from{opacity:0;transform:translateY(16px)}
+      to{opacity:1;transform:translateY(0)}
+    }
     @media (max-width:720px){
       header.hero{flex-direction:column;align-items:flex-start}
       .grid{grid-template-columns:1fr}
@@ -69,7 +148,7 @@
     </header>
 
     <div class="grid">
-      <section class="card">
+      <section class="card reveal" style="--d:40ms">
         <h2>① 客户信息</h2>
         <div class="field">
           <label for="customer">客户名称</label>
@@ -86,7 +165,7 @@
         <div class="hint">仅这三项必填，其余复选框默认留空。</div>
       </section>
 
-      <section class="card">
+      <section class="card reveal" style="--d:120ms">
         <h2>② 模板文件</h2>
         <label for="tpl">导入《新开户尽职调查表模版.docx》</label>
         <input id="tpl" type="file" accept=".docx" />
@@ -94,7 +173,7 @@
       </section>
     </div>
 
-    <section class="card" style="margin-top:20px">
+    <section class="card reveal" style="margin-top:20px;--d:200ms">
       <h2>③ 上门核实照片</h2>
       <div class="photos">
         <input id="photos" type="file" accept="image/*" multiple />
@@ -139,6 +218,7 @@
 
   const W_NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
   const PLACEHOLDERS = ['客户名称','行业分类','经营地址'];
+  const PHOTO_TOKEN = '[[PHOTO]]';
 
   const tplInput = document.getElementById('tpl');
   let tplBuffer = null;
@@ -179,12 +259,16 @@
   }
 
   function ensurePhotoBlock(xml){
-    const block = '<w:p><w:r><w:t>[[PHOTO]]</w:t></w:r></w:p>';
+    const block = `<w:p><w:r><w:t>${PHOTO_TOKEN}</w:t></w:r></w:p>`;
     const marker = /(<w:p[^>]*>[\s\S]*?上门核实图片[\s\S]*?<\/w:p>)/;
     if(marker.test(xml)) return xml.replace(marker,'$1'+block);
     const bodyClose = /<\/w:body>\s*<\/w:document>/;
     if(bodyClose.test(xml)) return xml.replace(bodyClose, block+'</w:body></w:document>');
     return xml + block;
+  }
+
+  function escapeRegExp(text){
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
   function sanitizeFileName(name){
@@ -247,6 +331,27 @@
     while((m=re.exec(rels))){ ids.push(parseInt(m[1],10)); }
     const max = ids.length ? Math.max.apply(null, ids) : 800;
     return 'rId'+(max+1);
+  }
+
+  function ensureImageContentTypes(zip){
+    const ctPath='[Content_Types].xml';
+    const ctFile=zip.file(ctPath);
+    if(!ctFile) return;
+    let xml=ctFile.asText();
+    const defaults=[
+      { ext:'jpeg', type:'image/jpeg' },
+      { ext:'jpg', type:'image/jpeg' },
+      { ext:'png', type:'image/png' }
+    ];
+    let insert='';
+    defaults.forEach((item)=>{
+      const re=new RegExp(`Extension="${item.ext}"`,'i');
+      if(!re.test(xml)) insert+=`<Default Extension="${item.ext}" ContentType="${item.type}"/>`;
+    });
+    if(insert){
+      xml=xml.replace('</Types>', insert+'</Types>');
+      zip.file(ctPath, xml);
+    }
   }
 
   function addImageRelationship(zip, rels, base64){
@@ -339,6 +444,7 @@
 
   function injectPhotoPages(zip,pages){
     if(!pages.length) return;
+    ensureImageContentTypes(zip);
     const relPath='word/_rels/document.xml.rels';
     let rels=zip.file(relPath).asText();
     let docXml=zip.file('word/document.xml').asText();
@@ -351,8 +457,8 @@
       if(idx<pages.length-1){ block+='<w:p><w:r><w:br w:type="page"/></w:r></w:p>'; }
     });
     zip.file(relPath,rels);
-    const token=/<w:t[^>]*>\[\[PHOTO\]\]<\/w:t>/;
-    if(token.test(docXml)) docXml=docXml.replace(token,block);
+    const tokenPara=new RegExp(`<w:p[^>]*>[\\s\\S]*?${escapeRegExp(PHOTO_TOKEN)}[\\s\\S]*?<\\/w:p>`);
+    if(tokenPara.test(docXml)) docXml=docXml.replace(tokenPara,block);
     else docXml=docXml.replace(/<\/w:body>\s*<\/w:document>/,block+'</w:body></w:document>');
     zip.file('word/document.xml',docXml);
   }
